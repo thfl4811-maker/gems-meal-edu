@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📆 이달의 식재료 카드 캘린더 | 동탄중앙고</title>
+<style>
+:root{--blue:#2563eb;--blue-soft:#eaf1ff;--ink:#17244a;--sub:#64748b;--line:#dbe6f7;--gold:#ffb020;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:linear-gradient(180deg,#f2f7ff,#fff 40%);color:var(--ink);display:flex;justify-content:center;min-height:100vh;line-height:1.6;}
+.app{width:100%;max-width:440px;padding:24px 18px 44px;}
+
+header{text-align:center;margin-bottom:16px;}
+header .badge{display:inline-block;background:var(--blue-soft);color:var(--blue);font-weight:800;font-size:12px;padding:4px 13px;border-radius:99px;margin-bottom:10px;}
+header h1{font-size:23px;line-height:1.35;}
+header h1 b{color:var(--blue);}
+header p{font-size:12.5px;color:var(--sub);margin-top:6px;word-break:keep-all;}
+
+/* 날짜 스트립 */
+.days{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;}
+.day{border:1.5px solid var(--line);background:#fff;border-radius:13px;padding:9px 2px;text-align:center;cursor:pointer;font-family:inherit;transition:all .15s;}
+.day .dw{display:block;font-size:11px;font-weight:700;color:var(--sub);}
+.day .dn{display:block;font-size:17px;font-weight:800;}
+.day .fd{display:block;font-size:15px;}
+.day.on{border-color:var(--blue);background:var(--blue);box-shadow:0 5px 14px rgba(37,99,235,.28);}
+.day.on .dw,.day.on .dn{color:#fff;}
+
+/* 오늘의 식재료 카드 */
+.fcard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px 22px;box-shadow:0 10px 26px rgba(23,36,74,.08);text-align:center;animation:pop .3s ease;}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98);}to{opacity:1;transform:none;}}
+.fcard .fdate{font-size:12px;font-weight:800;color:var(--blue);letter-spacing:.1em;margin-bottom:12px;}
+.fcard .femoji{font-size:64px;display:block;margin-bottom:10px;}
+.fcard h2{font-size:24px;margin-bottom:4px;}
+.fcard .inmenu{display:inline-block;background:var(--blue-soft);color:var(--blue);font-size:12.5px;font-weight:700;padding:4px 12px;border-radius:99px;margin:6px 0 14px;}
+.fcard p{font-size:14.5px;color:var(--sub);word-break:keep-all;}
+.fcard p b{color:var(--ink);}
+.fcard .fun{margin-top:14px;background:#fff7e8;border:1px dashed #f2d49b;border-radius:12px;padding:11px 13px;font-size:13.5px;color:#7a5a12;text-align:left;word-break:keep-all;}
+.fcard .fun b{color:#b0700a;}
+
+footer{text-align:center;font-size:11px;color:#9aa7c2;margin-top:22px;line-height:1.7;word-break:keep-all;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <span class="badge">🏫 동탄중앙고등학교 · 7월 첫째 주 (중식)</span>
+    <h1>📆 오늘의 <b>식재료 한 입</b></h1>
+    <p>날짜를 누르면 그날 급식 속 식재료 이야기가 나와요.<br>월간식단표를 넣으면 한 달 전체가 만들어집니다!</p>
+  </header>
+
+  <div class="days" id="days"></div>
+  <div id="cardBox"></div>
+
+  <footer>월간식단표(영양표시제) 기반 자동 구성 — 급식일마다 식재료 1가지씩 · 급식"소리"함 × 젬스 활용 예시</footer>
+</div>
+
+<script>
+const DATA=[
+ {dw:"월",dn:"6",emoji:"🐟",name:"코다리",menu:"코다리콩나물찜",
+  body:"<b>명태</b>를 반쯤 말린 게 코다리예요. 꾸덕한 살에 양념이 쏙 배어들죠. 단백질이 풍부하고 지방은 적은 담백한 생선!",
+  fun:"🧊 <b>같은 생선, 다른 이름</b> — 갓 잡으면 생태, 얼리면 동태, 바짝 말리면 북어, 반건조는 코다리, 새끼는 노가리. 명태 하나로 이름이 다섯 개!"},
+ {dw:"화",dn:"7",emoji:"🌾",name:"메밀",menu:"메밀비빔국수",
+  body:"메밀은 서늘한 땅에서 빨리 자라는 곡물이에요. 쌀·밀에 부족한 <b>필수아미노산</b>을 보완해줘서 곡물계의 조력자로 불려요.",
+  fun:"⚠️ <b>알레르기 번호 3번</b>이 바로 메밀! 오늘 식단표 괄호 속 (3)을 찾아보세요. 메밀 알레르기 친구들은 꼭 확인!"},
+ {dw:"수",dn:"8",emoji:"🍢",name:"어묵",menu:"꼬치어묵국",
+  body:"어묵은 생선살을 갈아 만들어요. 원료가 생선이라 <b>단백질 공급원</b>이 되죠. 뜨끈한 국물과 함께라면 급식실이 포장마차 부럽지 않아요.",
+  fun:"🏭 부산이 어묵으로 유명한 이유? 항구도시라 신선한 생선이 모였고, 그 살로 어묵 산업이 발달했기 때문이에요."},
+ {dw:"목",dn:"9",emoji:"🌿",name:"고사리",menu:"제주식고사리육개장",
+  body:"고사리는 봄에 꺾어 말려두고 일 년 내내 먹는 산나물이에요. <b>식이섬유</b>가 풍부해 장 건강을 도와줘요.",
+  fun:"🏝️ <b>제주식 육개장</b>은 고사리를 푹 끓여 걸쭉하게 만드는 게 특징! 소고기 대신 돼지고기와 고사리가 주인공인 제주 향토음식이에요."},
+ {dw:"금",dn:"10",emoji:"🦐",name:"새우",menu:"깐쇼새우떡강정 · 크림왕깐쇼새우",
+  body:"오늘은 새우 더블 데이! 새우는 <b>단백질</b>이 많고 지방이 적어요. 껍질째 먹는 작은 새우는 칼슘까지 챙겨줘요.",
+  fun:"⚠️ <b>알레르기 번호 9번</b>이 새우예요. 김치에도 새우젓 때문에 (9)가 붙는다는 사실, 알고 있었나요?"}
+];
+
+const daysBox=document.getElementById("days");
+const cardBox=document.getElementById("cardBox");
+
+DATA.forEach((d,i)=>{
+  const b=document.createElement("button");
+  b.className="day"+(i===0?" on":"");
+  b.innerHTML=`<span class="dw">${d.dw}</span><span class="dn">${d.dn}</span><span class="fd">${d.emoji}</span>`;
+  b.onclick=()=>{document.querySelectorAll(".day").forEach(x=>x.classList.remove("on"));b.classList.add("on");show(i);};
+  daysBox.appendChild(b);
+});
+
+function show(i){
+  const d=DATA[i];
+  cardBox.innerHTML=`
+  <div class="fcard">
+    <div class="fdate">7월 ${d.dn}일 (${d.dw}) · 오늘의 식재료</div>
+    <span class="femoji">${d.emoji}</span>
+    <h2>${d.name}</h2>
+    <span class="inmenu">🍽️ 오늘 급식 "${d.menu}"에 들어있어요</span>
+    <p>${d.body}</p>
+    <div class="fun">${d.fun}</div>
+  </div>`;
+}
+show(0);
+</script>
+</body>
+</html>

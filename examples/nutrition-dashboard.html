@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 급식 영양 대시보드 | 동탄중앙고</title>
+<style>
+:root{--blue:#2563eb;--blue-soft:#eaf1ff;--ink:#17244a;--sub:#64748b;--line:#dbe6f7;
+--ok:#0ca678;--ok-soft:#e9f9f2;--warn:#f59e0b;--warn-soft:#fff7e8;--bad:#e5484d;--bad-soft:#fdeeee;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:#f4f8ff;color:var(--ink);display:flex;justify-content:center;min-height:100vh;line-height:1.55;}
+.app{width:100%;max-width:520px;padding:24px 16px 46px;}
+
+header{margin-bottom:16px;}
+header .toprow{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+header h1{font-size:20px;}
+header h1 b{color:var(--blue);}
+header .period{background:#fff;border:1px solid var(--line);border-radius:99px;font-size:11.5px;font-weight:700;color:var(--sub);padding:5px 12px;}
+header p{font-size:12px;color:var(--sub);margin-top:6px;word-break:keep-all;}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 13px;}
+.kpi .kl{font-size:11px;font-weight:700;color:var(--sub);}
+.kpi .kv{font-size:21px;font-weight:800;margin:2px 0;}
+.kpi .kv small{font-size:12px;font-weight:700;color:var(--sub);}
+.kpi .kd{font-size:11px;font-weight:700;}
+.kpi .kd.ok{color:var(--ok);} .kpi .kd.warn{color:var(--warn);} .kpi .kd.bad{color:var(--bad);}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 15px;margin-bottom:14px;}
+.card h2{font-size:14.5px;margin-bottom:3px;}
+.card .csub{font-size:11.5px;color:var(--sub);margin-bottom:12px;word-break:keep-all;}
+
+/* 영양소 선택 + 차트 */
+.nutsel{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none;}
+.nutsel::-webkit-scrollbar{display:none;}
+.ns{flex:none;border:1.5px solid var(--line);background:#fff;color:var(--sub);font-size:12px;font-weight:800;padding:6px 12px;border-radius:99px;cursor:pointer;font-family:inherit;}
+.ns.on{border-color:var(--blue);background:var(--blue);color:#fff;}
+.chart{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:18px;position:relative;}
+.guide{position:absolute;left:0;right:0;border-top:2px dashed #b6c8ea;font-size:9.5px;color:#8fa3c8;text-align:right;padding-right:2px;}
+.cbar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.cbar .v{font-size:10.5px;font-weight:800;margin-bottom:3px;}
+.cbar i{display:block;width:100%;max-width:44px;border-radius:8px 8px 4px 4px;transition:height .5s ease;}
+.cbar .d{font-size:11px;font-weight:700;color:var(--sub);margin-top:5px;}
+.chartnote{font-size:11px;color:var(--sub);margin-top:10px;word-break:keep-all;}
+
+/* 히트맵 */
+.hm{width:100%;border-collapse:separate;border-spacing:3px;}
+.hm th{font-size:10.5px;color:var(--sub);font-weight:700;padding:2px;}
+.hm td{text-align:center;font-size:10.5px;font-weight:800;border-radius:7px;padding:7px 1px;}
+.hm .rowname{text-align:left;font-size:11px;color:var(--ink);white-space:nowrap;padding-right:4px;}
+.c-ok{background:var(--ok-soft);color:#0b7d5c;}
+.c-warn{background:var(--warn-soft);color:#b0700a;}
+.c-bad{background:var(--bad-soft);color:var(--bad);}
+.hmlegend{display:flex;gap:10px;font-size:10.5px;color:var(--sub);margin-top:8px;}
+.hmlegend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:3px;vertical-align:-1px;}
+
+/* 알레르기 빈도 */
+.abar{display:grid;grid-template-columns:70px 1fr 34px;gap:8px;align-items:center;margin-bottom:7px;}
+.abar .an{font-size:12px;font-weight:800;white-space:nowrap;}
+.abar .tr{height:16px;background:#eef2fb;border-radius:99px;overflow:hidden;}
+.abar .tr i{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .6s ease;}
+.abar .ac{font-size:12px;font-weight:800;color:var(--blue);text-align:right;}
+
+footer{text-align:center;font-size:11px;color:#9aa7c2;margin-top:18px;line-height:1.7;word-break:keep-all;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="toprow">
+      <h1>📊 급식 <b>영양 대시보드</b></h1>
+      <span class="period">2026년 7월 1주차 (7/6~10 · 중식)</span>
+    </div>
+    <p>동탄중앙고 학교급식 영양표시제 기반 · 영양표시제를 여러 주 첨부하면 월간으로 집계됩니다</p>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi"><span class="kl">주간 평균 에너지</span><div class="kv">951 <small>kcal</small></div><span class="kd ok">기준량 900의 106% ✅</span></div>
+    <div class="kpi"><span class="kl">에너지 구성비 (탄:단:지)</span><div class="kv" style="font-size:16px;padding:4px 0;">61.7 : 20.3 : 18.0</div><span class="kd ok">모두 적정 범위 ✅</span></div>
+    <div class="kpi"><span class="kl">충족 영양소 (100%↑)</span><div class="kv">4<small> / 8개</small></div><span class="kd ok">에너지·단백질·티아민·철분</span></div>
+    <div class="kpi"><span class="kl">관심 영양소</span><div class="kv" style="font-size:17px;padding:3px 0;">비타민A 60%</div><span class="kd warn">간식·식단 보완 추천 🥕</span></div>
+  </div>
+
+  <div class="card">
+    <h2>📈 영양소별 요일 추이</h2>
+    <p class="csub">영양소를 선택하면 요일별 섭취량과 기준선(권장 100%)을 보여줍니다</p>
+    <div class="nutsel" id="nutsel"></div>
+    <div class="chart" id="chart"></div>
+    <p class="chartnote" id="chartnote"></p>
+  </div>
+
+  <div class="card">
+    <h2>🗓️ 충족률 히트맵</h2>
+    <p class="csub">영양소 × 요일 — 한눈에 보는 이번 주 균형 (권장 대비 %)</p>
+    <table class="hm" id="heatmap"></table>
+    <div class="hmlegend">
+      <span><i style="background:var(--ok-soft);border:1px solid #b9ecd8"></i>100%↑</span>
+      <span><i style="background:var(--warn-soft);border:1px solid #f2d49b"></i>80~99%</span>
+      <span><i style="background:var(--bad-soft);border:1px solid #f5c6c8"></i>80% 미만</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ 알레르기 번호 출현 TOP 5</h2>
+    <p class="csub">이번 주 메뉴에 표시된 번호 빈도 — 안내·지도에 활용하세요</p>
+    <div id="allergy"></div>
+  </div>
+
+  <footer>자료: 동탄중앙고 학교급식 영양표시제(2026.6.29. 발행) · 표에 없는 수치는 만들지 않았습니다<br>급식"소리"함 × 젬스 활용 예시</footer>
+</div>
+
+<script>
+/* ===== 영양표시제 원자료 (요일별) ===== */
+const DAYS=["월","화","수","목","금"];
+const NUTS=[
+ {k:"energy",n:"에너지",u:"kcal",rec:900,v:[933.7,1045.01,946.95,694.39,1134.52]},
+ {k:"protein",n:"단백질",u:"g",rec:21.7,v:[75.13,54.36,27.3,31.6,48.75]},
+ {k:"vita",n:"비타민A",u:"㎍ RAE",rec:284,v:[60.73,279.22,199.89,145.16,169.29]},
+ {k:"thia",n:"티아민",u:"mg",rec:0.47,v:[0.51,1.47,0.28,0.5,0.4]},
+ {k:"ribo",n:"리보플라빈",u:"mg",rec:0.57,v:[0.58,0.82,0.49,0.51,0.4]},
+ {k:"vitc",n:"비타민C",u:"mg",rec:33.4,v:[57.14,22.92,30.29,15.93,31.51]},
+ {k:"ca",n:"칼슘",u:"mg",rec:300,v:[371.7,270.35,185.57,175.83,218.7]},
+ {k:"fe",n:"철분",u:"mg",rec:4.7,v:[5.2,5.98,16.15,3.8,9.84]}
+];
+
+/* 메뉴별 알레르기 번호 (안내문과 동일 원자료) */
+const MENUS=[[[5,6,16],[5,6,9,12,13,17,18],[5,6,13],[9],[13]],
+[[5,6],[5,6,10,13],[3,5,6,13],[13],[5,6,13]],
+[[1,5,6],[2,5,6,10,13,16],[1,5,6,16],[1,5,6,13,16],[13]],
+[[5],[2,5,6,10],[5,6,9,15],[5,6,10,13],[5,6],[9],[1,2,5,6,7,8,9,10,12,15,16,17,18]],
+[[5,6,9,17,18],[1,2,4,5,6,13],[5,6,9,12,13],[1,2,5,6,9,13],[9]]];
+const ALLERGENS={1:"난류",2:"우유",3:"메밀",4:"땅콩",5:"대두",6:"밀",7:"고등어",8:"게",9:"새우",10:"돼지고기",11:"복숭아",12:"토마토",13:"아황산류",14:"호두",15:"닭고기",16:"쇠고기",17:"오징어",18:"조개류",19:"잣"};
+
+/* ===== 영양소 선택 차트 ===== */
+let cur=0;
+const sel=document.getElementById("nutsel");
+NUTS.forEach((nt,i)=>{
+  const b=document.createElement("button");
+  b.className="ns"+(i===0?" on":"");
+  b.textContent=nt.n;
+  b.onclick=()=>{cur=i;document.querySelectorAll(".ns").forEach((x,xi)=>x.classList.toggle("on",xi===i));drawChart();};
+  sel.appendChild(b);
+});
+
+function fmt(x){return x>=100?Math.round(x).toLocaleString():(Math.round(x*100)/100);}
+function band(p){return p>=100?"ok":(p>=80?"warn":"bad");}
+const COLORS={ok:"#0ca678",warn:"#f59e0b",bad:"#e5484d"};
+
+function drawChart(){
+  const nt=NUTS[cur];
+  const box=document.getElementById("chart");
+  const max=Math.max(...nt.v,nt.rec)*1.15;
+  box.innerHTML=`<div class="guide" style="bottom:${nt.rec/max*100}%">권장 ${fmt(nt.rec)}${nt.u}</div>`;
+  nt.v.forEach((val,i)=>{
+    const p=val/nt.rec*100;
+    const d=document.createElement("div");
+    d.className="cbar";
+    d.innerHTML=`<span class="v" style="color:${COLORS[band(p)]}">${fmt(val)}</span><i style="height:0;background:${COLORS[band(p)]}"></i><span class="d">${DAYS[i]}</span>`;
+    box.appendChild(d);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{d.querySelector("i").style.height=(val/max*100)+"%";}));
+  });
+  const avg=nt.v.reduce((a,b)=>a+b,0)/nt.v.length;
+  const pc=Math.round(avg/nt.rec*100);
+  document.getElementById("chartnote").innerHTML=`주간 평균 <b>${fmt(avg)}${nt.u}</b> — 권장 ${fmt(nt.rec)}${nt.u}의 <b style="color:${COLORS[band(pc)]}">${pc}%</b> (계산: 요일별 값의 평균 ÷ 권장섭취량)`;
+}
+drawChart();
+
+/* ===== 히트맵 ===== */
+const hm=document.getElementById("heatmap");
+let html="<tr><th></th>"+DAYS.map(d=>`<th>${d}</th>`).join("")+"</tr>";
+NUTS.forEach(nt=>{
+  html+=`<tr><td class="rowname">${nt.n}</td>`+nt.v.map(v=>{
+    const p=Math.round(v/nt.rec*100);
+    return `<td class="c-${band(p)}">${p}%</td>`;
+  }).join("")+"</tr>";
+});
+hm.innerHTML=html;
+
+/* ===== 알레르기 번호 빈도 ===== */
+const freq={};
+MENUS.flat(2).forEach(n=>{freq[n]=(freq[n]||0)+1;});
+const top=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,5);
+const maxF=top[0][1];
+const aBox=document.getElementById("allergy");
+top.forEach(([n,c])=>{
+  const d=document.createElement("div");
+  d.className="abar";
+  d.innerHTML=`<span class="an">${n}. ${ALLERGENS[n]}</span><div class="tr"><i style="width:0"></i></div><span class="ac">${c}회</span>`;
+  aBox.appendChild(d);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{d.querySelector("i").style.width=(c/maxF*100)+"%";}));
+});
+</script>
+</body>
+</html>

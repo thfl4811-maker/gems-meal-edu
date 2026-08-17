@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍓 제철 식재료 이야기: 3월의 딸기 | 동탄중앙고</title>
+<style>
+:root{--red:#e5484d;--pink:#ffe9ec;--pink2:#fff5f6;--ink:#3b1f24;--sub:#8a6b70;--line:#f3d7db;--green:#2f9e6e;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:linear-gradient(180deg,var(--pink2),#fff 45%);color:var(--ink);display:flex;justify-content:center;min-height:100vh;line-height:1.6;}
+.app{width:100%;max-width:430px;padding:22px 0 40px;}
+
+header{text-align:center;padding:0 18px 14px;}
+header .badge{display:inline-block;background:var(--pink);color:var(--red);font-weight:800;font-size:12px;padding:4px 13px;border-radius:99px;}
+header p{font-size:12px;color:var(--sub);margin-top:8px;}
+
+/* 스와이프 트랙 */
+.deck{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding:6px 24px 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.deck::-webkit-scrollbar{display:none;}
+.cardn{flex:0 0 88%;scroll-snap-align:center;background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px 22px;box-shadow:0 10px 26px rgba(229,72,77,.09);min-height:430px;display:flex;flex-direction:column;justify-content:center;text-align:center;}
+.cardn .pgnum{font-size:11px;font-weight:800;color:#d9a3aa;letter-spacing:.14em;margin-bottom:14px;}
+.cardn .big{font-size:56px;line-height:1;margin-bottom:14px;}
+.cardn h2{font-size:21px;line-height:1.4;margin-bottom:12px;word-break:keep-all;}
+.cardn h2 b{color:var(--red);}
+.cardn p{font-size:14.5px;color:var(--sub);word-break:keep-all;}
+.cardn p b{color:var(--ink);}
+.cardn .hl{margin-top:14px;background:var(--pink2);border:1px dashed var(--line);border-radius:12px;padding:11px 13px;font-size:13.5px;color:var(--ink);word-break:keep-all;}
+.cardn .hl b{color:var(--red);}
+
+/* 표지 */
+.cardn.cover{background:linear-gradient(160deg,#ffdfe4,#fff);border-color:#f0c3c9;}
+.cover .big{font-size:74px;}
+.cover h2{font-size:26px;}
+.cover .swipehint{margin-top:20px;font-size:12.5px;font-weight:700;color:var(--red);animation:nudge 1.6s ease-in-out infinite;}
+@keyframes nudge{0%,100%{transform:translateX(0);}50%{transform:translateX(6px);}}
+
+/* 퀴즈 카드 */
+.qopt{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.qopt button{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:11px;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;font-family:inherit;}
+.qopt button.ok{border-color:var(--green);background:#ebfaf2;color:#1c7a52;}
+.qopt button.no{border-color:var(--red);background:#fdeeee;color:var(--red);}
+.qexp{display:none;margin-top:12px;font-size:13px;background:#ebfaf2;border:1px solid #bfe8d3;color:#1c7a52;border-radius:11px;padding:11px;word-break:keep-all;}
+.qexp.show{display:block;}
+
+/* 도트 */
+.dots{display:flex;justify-content:center;gap:7px;margin-top:14px;}
+.dots i{width:7px;height:7px;border-radius:50%;background:#eccdd2;transition:all .25s;}
+.dots i.on{background:var(--red);width:20px;border-radius:99px;}
+
+footer{text-align:center;font-size:11px;color:#c4a3a8;margin-top:20px;padding:0 20px;line-height:1.7;word-break:keep-all;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <span class="badge">🏫 동탄중앙고 급식실 × 제철 식재료 이야기</span>
+    <p>옆으로 넘겨 보세요 👉</p>
+  </header>
+
+  <div class="deck" id="deck">
+
+    <div class="cardn cover">
+      <div class="big">🍓</div>
+      <h2>3월의 제철 식재료<br><b>딸기</b></h2>
+      <p>봄 급식의 주인공,<br>알고 먹으면 두 배 맛있는 딸기 이야기</p>
+      <div class="swipehint">옆으로 스와이프 →</div>
+    </div>
+
+    <div class="cardn">
+      <div class="pgnum">01 · 왜 지금이 제철?</div>
+      <div class="big">🌱</div>
+      <h2>딸기는 <b>겨울~봄</b>이<br>가장 달아요</h2>
+      <p>서늘할 때 천천히 익은 딸기가 당도가 높아요. 3월은 향과 단맛이 꽉 찬 딸기를 즐길 수 있는 마지막 절정기!</p>
+    </div>
+
+    <div class="cardn">
+      <div class="pgnum">02 · 영양 이야기</div>
+      <div class="big">💊</div>
+      <h2>딸기 10알 =<br><b>하루 비타민C</b></h2>
+      <p>딸기 100g(약 7알)에는 비타민C가 약 67mg. 열 알이면 하루 권장량(청소년 기준 100mg)을 채우고도 남아요.</p>
+      <div class="hl">💡 비타민C는 <b>피로 회복</b>과 <b>철분 흡수</b>를 도와요 — 급식의 고기 반찬과 찰떡궁합!</div>
+    </div>
+
+    <div class="cardn">
+      <div class="pgnum">03 · 고르는 법</div>
+      <div class="big">👀</div>
+      <h2>맛있는 딸기는<br><b>꼭지</b>가 말해줘요</h2>
+      <p>꼭지가 진한 초록으로 싱싱하고, 표면에 광택이 있으며, 씨가 또렷하게 박힌 딸기가 신선해요. 꼭지 근처까지 빨갛게 익은 것이 단맛도 좋아요.</p>
+    </div>
+
+    <div class="cardn">
+      <div class="pgnum">04 · 보관과 세척</div>
+      <div class="big">🚿</div>
+      <h2>씻는 건<br><b>먹기 직전에!</b></h2>
+      <p>딸기는 물에 닿으면 쉽게 물러져요. 보관할 땐 씻지 말고, 먹기 직전에 <b>꼭지를 떼지 않은 채</b> 흐르는 물에 살살 씻어요.</p>
+      <div class="hl">꼭지를 먼저 떼고 씻으면 물이 스며들어 맛과 <b>비타민C가 빠져나가요</b> 🙅</div>
+    </div>
+
+    <div class="cardn">
+      <div class="pgnum">05 · 깜짝 퀴즈</div>
+      <div class="big">🧐</div>
+      <h2>딸기 겉의 깨알,<br>정체는 뭘까요?</h2>
+      <div class="qopt" id="quiz">
+        <button data-a="0">그냥 씨앗이다</button>
+        <button data-a="1">사실 하나하나가 진짜 열매다</button>
+        <button data-a="0">먼지가 붙은 것이다</button>
+      </div>
+      <div class="qexp" id="qexp">🎉 정답! 깨알처럼 보이는 것 하나하나가 <b>진짜 열매(수과)</b>이고, 우리가 먹는 빨간 부분은 꽃받침이 부풀어 오른 거예요. 딸기 한 알에 열매 200개!</div>
+    </div>
+
+    <div class="cardn cover">
+      <div class="big">🍽️</div>
+      <h2>이번 주 급식에서<br><b>딸기</b>를 만나요!</h2>
+      <p>후식으로 나오는 날, 오늘 배운 것 떠올리며<br>한 알 한 알 맛있게 먹어 주세요 🍓</p>
+      <div class="swipehint" style="animation:none;">— 동탄중앙고 영양선생님 드림 —</div>
+    </div>
+
+  </div>
+
+  <div class="dots" id="dots"></div>
+
+  <footer>영양 수치 근거: 국가표준식품성분표(딸기, 생것 100g당 비타민C) · 급식"소리"함 × 젬스 활용 예시</footer>
+</div>
+
+<script>
+/* 도트 인디케이터 */
+const deck=document.getElementById("deck");
+const cards=deck.querySelectorAll(".cardn");
+const dots=document.getElementById("dots");
+cards.forEach((c,i)=>{const d=document.createElement("i");if(i===0)d.classList.add("on");dots.appendChild(d);});
+deck.addEventListener("scroll",()=>{
+  const idx=Math.round(deck.scrollLeft/(cards[0].offsetWidth+14));
+  dots.querySelectorAll("i").forEach((d,i)=>d.classList.toggle("on",i===Math.min(idx,cards.length-1)));
+},{passive:true});
+
+/* 퀴즈 */
+document.querySelectorAll("#quiz button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll("#quiz button").forEach(x=>{
+      x.disabled=true;
+      if(x.dataset.a==="1")x.classList.add("ok");
+    });
+    if(b.dataset.a!=="1")b.classList.add("no");
+    document.getElementById("qexp").classList.add("show");
+  });
+});
+</script>
+</body>
+</html>

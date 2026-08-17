@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔔 알레르기 번호 도전 골든벨 | 동탄중앙고</title>
+<style>
+:root{--blue:#2563eb;--blue-soft:#eaf1ff;--ink:#17244a;--sub:#64748b;--ok:#0ca678;--no:#e5484d;--gold:#ffb020;--line:#e2e8f5;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:linear-gradient(180deg,#f2f7ff,#ffffff 40%);color:var(--ink);min-height:100vh;display:flex;justify-content:center;line-height:1.6;}
+.app{width:100%;max-width:440px;padding:20px 16px 40px;}
+
+.screen{display:none;animation:fade .3s ease;}
+.screen.on{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* 시작 화면 */
+.start{text-align:center;padding-top:48px;}
+.bell{font-size:72px;display:block;margin-bottom:12px;animation:swing 2.4s ease-in-out infinite;transform-origin:top center;}
+@keyframes swing{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
+.start h1{font-size:26px;line-height:1.35;margin-bottom:8px;}
+.start h1 b{color:var(--blue);}
+.school{display:inline-block;background:var(--blue-soft);color:var(--blue);font-weight:800;font-size:13px;padding:5px 14px;border-radius:99px;margin-bottom:18px;}
+.start p{color:var(--sub);font-size:14.5px;margin-bottom:26px;}
+.bigbtn{width:100%;border:none;background:var(--blue);color:#fff;font-size:17px;font-weight:800;padding:16px;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(37,99,235,.3);}
+.bigbtn:active{transform:scale(.98);}
+.legend{margin-top:22px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:11.5px;color:var(--sub);}
+.legend b{color:var(--ink);}
+
+/* 퀴즈 화면 */
+.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--sub);}
+.qhead .score{color:var(--gold);}
+.bar{height:8px;background:#e6edfb;border-radius:99px;overflow:hidden;margin-bottom:20px;}
+.bar i{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .3s;}
+.qcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 18px;box-shadow:0 6px 20px rgba(23,36,74,.06);}
+.qtype{display:inline-block;font-size:11px;font-weight:800;background:var(--blue-soft);color:var(--blue);padding:3px 10px;border-radius:99px;margin-bottom:10px;}
+.qtext{font-size:17.5px;font-weight:800;line-height:1.5;margin-bottom:16px;word-break:keep-all;}
+.qtext .menu{color:var(--blue);}
+.opts{display:flex;flex-direction:column;gap:9px;}
+.opt{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);background:#fbfcff;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:600;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);transition:border-color .12s,background .12s;}
+.opt .no{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--blue);color:var(--blue);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;background:#fff;}
+.opt:not(:disabled):hover{border-color:var(--blue);}
+.opt.correct{border-color:var(--ok);background:#e9f9f2;}
+.opt.correct .no{border-color:var(--ok);color:#fff;background:var(--ok);}
+.opt.wrong{border-color:var(--no);background:#fdeeee;}
+.opt.wrong .no{border-color:var(--no);color:#fff;background:var(--no);}
+.opt:disabled{cursor:default;opacity:.92;}
+.explain{margin-top:14px;border-radius:12px;padding:13px 14px;font-size:14px;display:none;line-height:1.55;word-break:keep-all;}
+.explain.ok{display:block;background:#e9f9f2;border:1px solid #b9ecd8;}
+.explain.no{display:block;background:#fdeeee;border:1px solid #f5c6c8;}
+.explain b{display:block;margin-bottom:3px;}
+.nextbtn{display:none;width:100%;margin-top:14px;border:none;background:var(--ink);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:12px;cursor:pointer;font-family:inherit;}
+.nextbtn.show{display:block;}
+
+/* 결과 화면 */
+.result{text-align:center;padding-top:36px;}
+.result .emoji{font-size:66px;display:block;margin-bottom:10px;}
+.result h2{font-size:24px;margin-bottom:6px;}
+.result .rscore{font-size:15px;color:var(--sub);margin-bottom:6px;}
+.result .rscore b{color:var(--blue);font-size:22px;}
+.rmsg{color:var(--sub);font-size:14.5px;margin:0 auto 24px;max-width:320px;word-break:keep-all;}
+.retry{background:#fff;color:var(--blue);border:1.5px solid var(--blue);box-shadow:none;margin-top:10px;}
+footer{margin-top:34px;text-align:center;font-size:11.5px;color:#9aa7c2;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 시작 -->
+  <div class="screen start on" id="scrStart">
+    <span class="bell">🔔</span>
+    <h1>알레르기 번호<br><b>도전 골든벨!</b></h1>
+    <span class="school">🏫 동탄중앙고등학교</span>
+    <p>급식 식단표 괄호 속 번호, 읽을 줄 아나요?<br>우리 학교 실제 메뉴로 10문제에 도전하세요!</p>
+    <button class="bigbtn" onclick="startQuiz()">도전 시작 🚀</button>
+    <div class="legend"><b>※ 알레르기 유발식품 19종</b> — 1.난류 2.우유 3.메밀 4.땅콩 5.대두 6.밀 7.고등어 8.게 9.새우 10.돼지고기 11.복숭아 12.토마토 13.아황산류 14.호두 15.닭고기 16.쇠고기 17.오징어 18.조개류(굴·전복·홍합 포함) 19.잣</div>
+  </div>
+
+  <!-- 퀴즈 -->
+  <div class="screen" id="scrQuiz">
+    <div class="qhead"><span id="qNum">문제 1 / 10</span><span class="score" id="qScore">⭐ 0점</span></div>
+    <div class="bar"><i id="qBar" style="width:10%"></i></div>
+    <div class="qcard">
+      <span class="qtype" id="qType"></span>
+      <div class="qtext" id="qText"></div>
+      <div class="opts" id="qOpts"></div>
+      <div class="explain" id="qExp"></div>
+      <button class="nextbtn" id="qNext" onclick="nextQ()">다음 문제 →</button>
+    </div>
+  </div>
+
+  <!-- 결과 -->
+  <div class="screen result" id="scrEnd">
+    <span class="emoji" id="rEmoji">🔔</span>
+    <h2 id="rTitle"></h2>
+    <div class="rscore">내 점수 <b id="rScore"></b> / 10점</div>
+    <p class="rmsg" id="rMsg"></p>
+    <button class="bigbtn" onclick="location.reload()">다시 도전하기 🔁</button>
+  </div>
+
+  <footer>본 퀴즈는 우리 학교 식단표의 알레르기 표시를 바탕으로 만들었습니다.<br>급식"소리"함 × 젬스 활용 예시</footer>
+</div>
+
+<script>
+const QUIZ=[
+ {t:"번호 → 재료",q:'<span class="menu">미역국 (5.6.9.13.18)</span><br>여기서 <b>18번</b>은 무슨 재료일까?',
+  o:["조개류","잣","오징어","쇠고기","호두"],a:0,
+  e:"18번은 조개류(굴·전복·홍합 포함)! 미역국 국물을 낼 때 조개류가 들어가는 경우가 많아요."},
+ {t:"재료 → 메뉴",q:'<b>새우(9번)</b> 알레르기가 있는 친구가 피해야 할 메뉴는?',
+  o:["배추김치 (9)","현미밥","사과","도토리묵무침 (5.6.13)","우유"],a:0,
+  e:"배추김치에 9번이 있는 이유는 김치 양념의 새우젓 때문! 김치처럼 뜻밖의 메뉴에도 알레르기 번호가 숨어 있어요."},
+ {t:"번호 찾기",q:'다음 중 <b>우유(2번)</b>가 들어간 메뉴는?',
+  o:["크림스파게티 (1.2.5.6.13)","제육볶음 (5.6.10.13)","미역국 (5.6.9.13.18)","고등어구이 (7.13)","배추김치 (9)"],a:0,
+  e:"괄호 속에 2가 있는 메뉴를 찾으면 끝! 크림소스는 우유로 만들어서 2번이 표시돼요."},
+ {t:"번호 → 재료",q:'<span class="menu">제육볶음 (5.6.10.13)</span><br>여기서 <b>10번</b>은 무슨 재료일까?',
+  o:["돼지고기","쇠고기","닭고기","고등어","게"],a:0,
+  e:"10번은 돼지고기. 제육볶음의 주재료죠! 고기류는 10.돼지고기, 15.닭고기, 16.쇠고기로 각각 번호가 달라요."},
+ {t:"번호 → 재료",q:'<span class="menu">닭갈비 (5.6.13.15)</span><br>여기서 <b>15번</b>은 무슨 재료일까?',
+  o:["닭고기","땅콩","복숭아","토마토","밀"],a:0,
+  e:"15번은 닭고기! 닭갈비니까 당연하겠죠? 번호와 메뉴 이름을 연결해서 외우면 쉬워요."},
+ {t:"재료 → 메뉴",q:'<b>고등어(7번)</b> 알레르기가 있는 친구가 피해야 할 메뉴는?',
+  o:["고등어구이 (7.13)","오징어볶음 (5.6.13.17)","쇠고기미역국 (5.6.16.18)","토마토달걀볶음 (1.12)","현미밥"],a:0,
+  e:"7번이 표시된 고등어구이! 생선이라고 다 같은 번호가 아니라 고등어는 7번, 오징어는 17번으로 따로 있어요."},
+ {t:"번호 → 재료",q:'<span class="menu">오징어볶음 (5.6.13.17)</span><br>여기서 <b>17번</b>은 무슨 재료일까?',
+  o:["오징어","조개류","새우","게","아황산류"],a:0,
+  e:"17번은 오징어. 8.게, 9.새우, 17.오징어, 18.조개류 — 해산물은 종류별로 번호가 나뉘어 있으니 헷갈리지 마세요!"},
+ {t:"번호 찾기",q:'다음 중 <b>난류(1번, 달걀 등)</b>가 들어간 메뉴는?',
+  o:["토마토달걀볶음 (1.12)","도토리묵무침 (5.6.13)","배추김치 (9)","사과","미역국 (5.6.9.13.18)"],a:0,
+  e:"1번 난류는 달걀 등 알 종류! 토마토달걀볶음에는 12번(토마토)과 1번(난류)이 함께 표시돼요."},
+ {t:"생각해보기",q:'볶음·무침 반찬에 <b>13번(아황산류)</b>이 유난히 자주 보여요. 아황산류는 무엇일까?',
+  o:["일부 가공식품·건조과일 등에 쓰이는 식품첨가물류","돼지고기의 다른 이름","콩으로 만든 장류","견과류의 한 종류","바다에서 나는 해조류"],a:0,
+  e:"아황산류는 일부 가공식품에 사용되는 식품첨가물류예요. 양념·소스에 쓰인 가공 원재료를 따라 표시되는 경우가 많아 자주 보여요."},
+ {t:"생각해보기",q:'<b>대두(5)와 밀(6)</b>이 거의 모든 반찬에 붙어 다니는 이유는?',
+  o:["간장·된장 등 장류 양념이 대두와 밀로 만들어져서","급식실 규정상 무조건 표시해야 해서","콩밥과 밀가루밥을 섞어 지어서","대두와 밀은 같은 식물이라서","맛을 좋게 하는 조미료 번호라서"],a:0,
+  e:"정답! 간장은 보통 대두와 밀로 빚어요. 그래서 간장·된장으로 양념한 반찬엔 5번, 6번이 세트로 따라옵니다."}
+];
+
+let cur=0,score=0;
+const $=id=>document.getElementById(id);
+
+function shuffle(q){
+  const idx=[...q.o.keys()].sort(()=>Math.random()-.5);
+  return {opts:idx.map(i=>q.o[i]),ans:idx.indexOf(q.a)};
+}
+let view=null;
+
+function startQuiz(){cur=0;score=0;$("scrStart").classList.remove("on");$("scrQuiz").classList.add("on");renderQ();}
+
+function renderQ(){
+  const q=QUIZ[cur];view=shuffle(q);
+  $("qNum").textContent=`문제 ${cur+1} / ${QUIZ.length}`;
+  $("qScore").textContent=`⭐ ${score}점`;
+  $("qBar").style.width=((cur+1)/QUIZ.length*100)+"%";
+  $("qType").textContent=q.t;
+  $("qText").innerHTML=q.q;
+  $("qExp").className="explain";$("qExp").innerHTML="";
+  $("qNext").classList.remove("show");
+  $("qNext").textContent=cur===QUIZ.length-1?"결과 보기 🔔":"다음 문제 →";
+  const box=$("qOpts");box.innerHTML="";
+  view.opts.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="opt";b.innerHTML=`<span class="no">${i+1}</span><span>${t}</span>`;
+    b.onclick=()=>pick(i,b);box.appendChild(b);
+  });
+}
+
+function pick(i,btn){
+  const q=QUIZ[cur];
+  document.querySelectorAll(".opt").forEach((b,bi)=>{b.disabled=true;if(bi===view.ans)b.classList.add("correct");});
+  const ok=i===view.ans;
+  if(ok)score++;else btn.classList.add("wrong");
+  $("qScore").textContent=`⭐ ${score}점`;
+  const exp=$("qExp");
+  exp.className="explain "+(ok?"ok":"no");
+  exp.innerHTML=`<b>${ok?"⭕ 정답!":"❌ 아쉬워요! 정답: "+q.o[q.a]}</b>${q.e}`;
+  $("qNext").classList.add("show");
+}
+
+function nextQ(){
+  if(cur<QUIZ.length-1){cur++;renderQ();}
+  else{
+    $("scrQuiz").classList.remove("on");$("scrEnd").classList.add("on");
+    $("rScore").textContent=score;
+    let e,t,m;
+    if(score>=9){e="🔔";t="골든벨! 알레르기 마스터";m="완벽해요! 이제 식단표의 어떤 번호도 읽어낼 수 있어요. 친구들의 알레르기 지킴이가 되어 주세요!";}
+    else if(score>=6){e="🥈";t="예비 마스터";m="거의 다 왔어요! 헷갈렸던 번호만 다시 확인하면 골든벨은 시간문제예요.";}
+    else{e="🌱";t="다시 도전!";m="괜찮아요, 시작 화면의 19종 번호표를 한 번 더 읽고 다시 도전해 보세요. 두 번째엔 분명 오를 거예요!";}
+    $("rEmoji").textContent=e;$("rTitle").textContent=t;$("rMsg").textContent=m;
+  }
+}
+</script>
+</body>
+</html>

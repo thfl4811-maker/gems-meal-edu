@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>젬스 활용 '식단+교육' 자료 만들기 | 급식소리함</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+@font-face{font-family:'GmarketSans';src:url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');font-weight:700;font-display:swap;}
+@font-face{font-family:'GmarketSans';src:url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');font-weight:500;font-display:swap;}
+
+:root{
+  --ink:#122448;          /* 딥 네이비 잉크 */
+  --cobalt:#1d4ed8;       /* 코발트 블루 (급식소리함 포인트) */
+  --cobalt-soft:#eaf1ff;  /* 연한 블루 배경 */
+  --line:#dbe4f5;         /* 옅은 블루 선 */
+  --yellow:#ffb020;       /* 단무지 옐로우 - 변환 순간에만 */
+  --paper:#ffffff;
+  --sub:#5a6b8c;
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;color:var(--ink);background:var(--paper);line-height:1.65;}
+.disp{font-family:'GmarketSans','Pretendard Variable',sans-serif;}
+
+.wrap{max-width:960px;margin:0 auto;padding:0 20px;}
+
+/* ── 상단 바 ───────────────────── */
+.topbar{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:50;}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:56px;}
+.brand{font-weight:800;font-size:15px;color:var(--cobalt);text-decoration:none;display:flex;align-items:center;gap:8px;}
+.brand span{color:var(--sub);font-weight:500;font-size:13px;}
+.topnav{display:flex;gap:4px;flex-wrap:wrap;}
+.topnav a{font-size:13px;color:var(--sub);text-decoration:none;padding:6px 10px;border-radius:8px;font-weight:600;}
+.topnav a:hover,.topnav a:focus-visible{background:var(--cobalt-soft);color:var(--cobalt);}
+
+/* ── 히어로: 식단표 → 8가지 콘텐츠 ── */
+.hero{padding:56px 0 40px;background:linear-gradient(180deg,#f6f9ff 0%,#ffffff 100%);border-bottom:1px solid var(--line);}
+.hero-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;margin-top:36px;}
+.hero h1{font-size:clamp(26px,4.5vw,40px);line-height:1.3;letter-spacing:-0.02em;}
+.hero h1 em{font-style:normal;color:var(--cobalt);}
+.hero p.lead{margin-top:14px;color:var(--sub);font-size:16px;max-width:560px;}
+.hero-eval{display:inline-block;margin-top:14px;background:#e9f9f2;border:1px solid #b9ecd8;color:#0b7d5c;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:99px;word-break:keep-all;}
+.hero-eval b{color:#087f5b;}
+
+/* 미니 식단표 카드 */
+.menucard{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:0 8px 24px rgba(29,78,216,.07);}
+.menucard .mc-head{font-size:12px;font-weight:700;color:var(--cobalt);letter-spacing:.08em;border-bottom:2px solid var(--cobalt);padding-bottom:8px;margin-bottom:10px;display:flex;justify-content:space-between;}
+.menucard ul{list-style:none;font-size:14px;}
+.menucard li{padding:3px 0;}
+.menucard li small{color:var(--sub);font-size:11px;}
+.menucard .mc-foot{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);font-size:11px;color:var(--sub);}
+
+.arrow{font-size:28px;color:var(--yellow);font-weight:800;text-align:center;}
+.arrow small{display:block;font-size:11px;color:var(--sub);font-weight:600;margin-top:2px;}
+
+/* 콘텐츠 칩 8개 */
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.chip{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 8px;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;}
+.chip .num{flex:none;width:19px;height:19px;font-size:11px;}
+
+/* 알레르기 번호 스타일 배지 = 페이지 시그니처 */
+.num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--cobalt);color:var(--cobalt);font-size:12px;font-weight:800;background:#fff;}
+.num.on{background:var(--cobalt);color:#fff;}
+
+.legendline{margin-top:22px;font-size:12.5px;color:var(--sub);background:#fff;border:1px dashed var(--line);border-radius:10px;padding:10px 14px;}
+.legendline b{color:var(--cobalt);}
+
+/* ── 공통 섹션 ───────────────────── */
+section{padding:56px 0;}
+section + section{border-top:1px solid var(--line);}
+.sec-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--cobalt);letter-spacing:.06em;margin-bottom:10px;}
+.sec-eyebrow .step{background:var(--cobalt);color:#fff;border-radius:8px;padding:2px 8px;font-size:12px;}
+h2{font-size:clamp(21px,3vw,27px);letter-spacing:-0.01em;margin-bottom:8px;}
+.sec-sub{color:var(--sub);font-size:15px;margin-bottom:28px;max-width:640px;}
+
+/* ── ① 갤러리 8종 ───────────────── */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media (max-width:760px){.gallery{grid-template-columns:1fr;}}
+.gcard{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:#fff;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s,transform .15s;}
+.gcard:hover{box-shadow:0 10px 26px rgba(29,78,216,.1);transform:translateY(-2px);}
+.gcard .g-top{display:flex;align-items:center;gap:8px;}
+.gcard .g-type{font-weight:800;font-size:15px;}
+.gcard .g-ex{font-size:13px;color:var(--sub);flex:1;}
+.gcard .g-ex b{color:var(--ink);}
+.gcard a.g-link{font-size:13px;font-weight:700;color:var(--cobalt);text-decoration:none;display:inline-flex;align-items:center;gap:4px;}
+.gcard a.g-link:hover{text-decoration:underline;}
+.gcard .g-soon{font-size:12.5px;color:#9aa7c2;font-weight:600;}
+.pbtn{border:1.5px solid var(--cobalt);background:#fff;color:var(--cobalt);font-weight:700;font-size:12px;padding:6px 10px;border-radius:9px;cursor:pointer;font-family:inherit;align-self:flex-start;}
+.pbtn:hover{background:var(--cobalt-soft);}
+.pbtn.done{background:#0ca678;border-color:#0ca678;color:#fff;}
+.gtag{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:99px;align-self:flex-start;}
+.gtag.meal{background:var(--cobalt-soft);color:var(--cobalt);}
+.gtag.edu{background:#fff4dd;color:#b0700a;}
+.g-prep{font-size:11px;color:#8494b8;background:#f6f9ff;border:1px dashed var(--line);border-radius:8px;padding:5px 8px;line-height:1.5;word-break:keep-all;}
+.g-prep b{color:#5a70a0;}
+
+/* ── ② 재료 ────────────────────── */
+.mats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.mat{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcff;font-size:14px;}
+.mat b{display:block;margin-bottom:2px;}
+.mat small{color:var(--sub);}
+
+/* ── ③ 프롬프트 ─────────────────── */
+.prompt-block{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:18px;background:#fff;}
+.prompt-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;background:var(--cobalt-soft);}
+.prompt-head b{font-size:14.5px;}
+.copybtn{border:none;background:var(--cobalt);color:#fff;font-weight:700;font-size:13px;padding:7px 14px;border-radius:9px;cursor:pointer;font-family:inherit;}
+.copybtn:hover{background:#1a44bd;}
+.copybtn.done{background:#0ca678;}
+.prompt-body{padding:16px;font-size:13.5px;white-space:pre-wrap;background:#fbfcff;color:#31415f;font-family:'Pretendard Variable',monospace;line-height:1.7;max-height:280px;overflow:auto;}
+.tipnote{font-size:13.5px;color:var(--sub);background:#fbfcff;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;margin-top:6px;}
+
+/* ── ④ 휴대폰에 띄우기 ───────────── */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;counter-reset:step;}
+.stp{border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px;background:#fff;position:relative;}
+.stp::before{counter-increment:step;content:counter(step);position:absolute;top:-12px;left:14px;width:26px;height:26px;border-radius:50%;background:var(--yellow);color:#5c3d00;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(255,176,32,.4);}
+.stp b{display:block;margin-bottom:6px;font-size:15px;}
+.stp p{font-size:13.5px;color:var(--sub);}
+.qrhint{margin-top:24px;padding:16px 18px;border-radius:var(--radius);background:linear-gradient(120deg,#eaf1ff,#fff7e8);border:1px solid var(--line);font-size:14.5px;}
+.qrhint b{color:var(--cobalt);}
+
+/* ── 푸터 ───────────────────────── */
+footer{border-top:1px solid var(--line);padding:28px 0 48px;color:var(--sub);font-size:13px;}
+footer a{color:var(--cobalt);text-decoration:none;font-weight:700;}
+
+@media (max-width:760px){
+  .hero-grid{grid-template-columns:1fr;gap:12px;}
+  .arrow{transform:rotate(90deg);margin:2px auto;}
+  .arrow small{transform:rotate(-90deg);display:none;}
+  .chips{grid-template-columns:repeat(3,1fr);}
+  .chip{font-size:10.5px;padding:6px 5px;gap:4px;}
+  .chip .num{width:16px;height:16px;font-size:9.5px;border-width:1px;}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .gcard{transition:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- 급식소리함 게이트: 로그인 + 2차 강의 코드(tier 2) -->
+<script>window.SORI_GATE_SKIP=false;</script>
+<script src="https://geupsik-soriham.vercel.app/sori-gate.js"></script>
+<script>
+window.addEventListener('sori-ready', function(){
+  var p = (window.SORI && (window.SORI.profile || window.SORI.user)) || {};
+  var tier = p.tier || 0;
+  if (tier < 2) {
+    document.body.innerHTML =
+      '<div style="max-width:520px;margin:14vh auto;padding:34px 28px;font-family:Pretendard,-apple-system,sans-serif;text-align:center;background:#fff;border:1px solid #dbe4f5;border-radius:18px;box-shadow:0 10px 30px rgba(18,36,72,.07)">'
+      + '<div style="font-size:44px;margin-bottom:10px">&#128273;</div>'
+      + '<h1 style="font-size:21px;color:#122448;margin-bottom:10px">2차 강의 자료입니다</h1>'
+      + '<p style="font-size:14px;color:#5a6b8c;line-height:1.75;word-break:keep-all">이 페이지는 <b>2차 직무연수에 참여하신 선생님</b>만 열람하실 수 있어요.<br>급식소리함에서 <b>2차 강의 코드</b>를 입력하시면 바로 열립니다.</p>'
+      + '<a href="https://geupsik-soriham.vercel.app" style="display:inline-block;margin-top:18px;background:#1d4ed8;color:#fff;font-weight:700;font-size:14px;padding:12px 22px;border-radius:11px;text-decoration:none">급식소리함으로 이동</a>'
+      + '</div>';
+  }
+});
+</script>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="https://geupsik-soriham.vercel.app">🍚 급식소리함 <span>젬스 활용</span></a>
+    <nav class="topnav">
+      <a href="#make">①만들기</a>
+      <a href="#source">②재료</a>
+      <a href="#prompt">③프롬프트</a>
+      <a href="#publish">④띄우기</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ═══ 히어로 ═══ -->
+<header class="hero">
+  <div class="wrap">
+    <h1 class="disp">식단표 <em>한 장</em>이,<br>퀴즈·게임·인포그래픽 <em>9가지 콘텐츠</em>가 됩니다</h1>
+    <p class="lead">나만의 젬(Gem)에 급식 자료를 넣으면 학생 휴대폰으로 바로 열리는 웹 콘텐츠가 나옵니다. 예시를 눌러 먼저 구경해 보세요.</p>
+    <div class="hero-eval">🏅 학교급식 운영평가 <b>필수 교육 실적물</b>(나트륨·당류 저감화, 음식물쓰레기 줄이기)도 젬으로 만들 수 있어요</div>
+
+    <div class="hero-grid">
+      <!-- 왼쪽: 미니 식단표 -->
+      <div class="menucard" aria-label="식단표 예시">
+        <div class="mc-head"><span>3월 12일 (목) 중식</span><span>동탄중앙고</span></div>
+        <ul>
+          <li>현미밥</li>
+          <li>미역국 <small>(5.6.9.13.18)</small></li>
+          <li>제육볶음 <small>(5.6.10.13)</small></li>
+          <li>도토리묵무침 <small>(5.6.13)</small></li>
+          <li>배추김치 <small>(9)</small></li>
+          <li>사과</li>
+        </ul>
+        <div class="mc-foot">에너지 812kcal · 단백질 32.1g</div>
+      </div>
+
+      <div class="arrow">➜<small>젬(Gem)</small></div>
+
+      <!-- 오른쪽: 8종 칩 -->
+      <div class="chips" aria-label="만들 수 있는 9가지 콘텐츠">
+        <div class="chip"><span class="num">1</span>웹 문서</div>
+        <div class="chip"><span class="num">2</span>웹 인포그래픽</div>
+        <div class="chip"><span class="num">3</span>웹 대시보드</div>
+        <div class="chip"><span class="num">4</span>웹 카드뉴스</div>
+        <div class="chip"><span class="num">5</span>웹 슬라이드</div>
+        <div class="chip"><span class="num">6</span>웹 타임라인</div>
+        <div class="chip"><span class="num">7</span>웹 시뮬레이션</div>
+        <div class="chip"><span class="num">8</span>웹 퀴즈</div>
+        <div class="chip"><span class="num">9</span>웹 게임</div>
+      </div>
+    </div>
+
+    <div class="legendline">※ 콘텐츠 유형: <b>1.</b>웹 문서 <b>2.</b>웹 인포그래픽 <b>3.</b>웹 대시보드 <b>4.</b>웹 카드뉴스 <b>5.</b>웹 슬라이드 <b>6.</b>웹 타임라인 <b>7.</b>웹 시뮬레이션 <b>8.</b>웹 퀴즈 <b>9.</b>웹 게임 — 우리 식단표의 알레르기 번호처럼, 이 페이지에서는 콘텐츠에 번호를 붙였습니다 🙂</div>
+  </div>
+</header>
+
+<!-- ═══ ① 무엇을 만들 수 있나 ═══ -->
+<section id="make">
+  <div class="wrap">
+    <div class="sec-eyebrow"><span class="step">STEP 1</span> 무엇을 만들 수 있나요?</div>
+    <h2 class="disp">실제로 만들어 둔 9가지 예시</h2>
+    <p class="sec-sub">전부 급식 자료 하나로 만들었습니다. 카드를 눌러 결과물을 열어 보세요 — 카드마다 달린 <b>📋 전용 프롬프트</b>를 복사해 우리 학교 식단표와 함께 젬에 넣으면, 우리 학교 버전이 나옵니다.</p>
+
+    <div class="gallery">
+      <div class="gcard">
+        <div class="g-top"><span class="num on">1</span><span class="g-type">웹 문서</span></div>
+        <span class="gtag meal">식단 소재</span>
+        <div class="g-ex">예시: <b>이달의 알레르기 안내문</b></div>
+        <div class="g-prep">📎 준비물: <b>월간식단표</b>(알레르기 번호 포함)</div>
+        <a class="g-link" href="examples/allergy-notice.html" target="_blank">▶ 예시① 학생·학부모용 안내문</a>
+        <button class="pbtn" data-p="doc">📋 프롬프트① 복사</button>
+        <a class="g-link" href="examples/kitchen-allergy-brief.html" target="_blank">▶ 예시② 조리실 배식 주의 안내</a>
+        <button class="pbtn" data-p="kitchen">📋 프롬프트② 복사</button>
+      </div>
+      <div class="gcard">
+        <div class="g-top"><span class="num on">2</span><span class="g-type">웹 인포그래픽</span></div>
+        <span class="gtag meal">식단 소재</span>
+        <div class="g-ex">예시: <b>우리 학교 급식 일주일 영양 리포트</b></div>
+        <div class="g-prep">📎 준비물: <b>주간 영양표시제</b></div>
+        <a class="g-link" href="examples/nutrition-infographic.html" target="_blank">▶ 예시 열어보기</a>
+        <button class="pbtn" data-p="info">📋 전용 프롬프트 복사</button>
+      </div>
+      <div class="gcard">
+        <div class="g-top"><span class="num on">3</span><span class="g-type">웹 대시보드</span></div>
+        <span class="gtag meal">식단 소재</span>
+        <div class="g-ex">예시: <b>급식 영양 대시보드</b></div>
+        <div class="g-prep">📎 준비물: <b>영양표시제 여러 주</b> 또는 나이스 영양소 분석 자료</div>
+        <a class="g-link" href="examples/nutrition-dashboard.html" target="_blank">▶ 예시 열어보기</a>
+        <button class="pbtn" data-p="dash">📋 전용 프롬프트 복사</button>
+      </div>
+      <div class="gcard">
+        <div class="g-top"><span class="num on">4</span><span class="g-type">웹 카드뉴스</span></div>
+        <span class="gtag meal">식단 소재</span>
+        <div class="g-ex">예시: <b>제철 식재료 이야기: 3월의 딸기</b></div>
+        <div class="g-prep">📎 준비물: <b>식재료 이름</b>만 입력해도 OK (식단표 첨부 시 실제 메뉴 연계)</div>
+        <a class="g-link" href="examples/seasonal-cardnews.html" target="_blank">▶ 예시① 한 식재료 깊이 파기</a>
+        <button class="pbtn" data-p="cardnews">📋 프롬프트① 복사</button>
+        <a class="g-link" href="examples/monthly-food-calendar.html" target="_blank">▶ 예시② 이달의 식재료 캘린더</a>
+        <button class="pbtn" data-p="calendar">📋 프롬프트② 복사</button>
+      </div>
+      <div class="gcard">
+        <div class="g-top"><span class="num on">5</span><span class="g-type">웹 슬라이드</span></div>
+        <span class="gtag edu">교육 소재</span>
+        <div class="g-ex">예시: <b>나트륨, 얼마나 알고 먹니?</b></div>
+        <div class="g-prep">📎 준비물: <b>영양교육 자료·지도안</b> 텍스트</div>
+        <a class="g-link" href="examples/sodium-lesson-slides.html" target="_blank">▶ 예시① 나트륨 줄이기 수업</a>
+        <a class="g-link" href="examples/zero-waste-slides.html" target="_blank">▶ 예시② 잔반 제로 챌린지</a>
+        <button class="pbtn" data-p="slides">📋 전용 프롬프트 복사</button>
+      </div>
+      <div class="gcard">
+        <div class="g-top"><span class="num on">6</span><span class="g-type">웹 타임라인</span></div>
+        <span class="gtag edu">교육 소재</span>
+        <div class="g-ex">예시: <b>한 끼 급식이 만들어지기까지</b></div>
+        <div class="g-prep">📎 준비물: 없어도 OK (우리 급식실 하루 일과 메모가 있으면 더 생생)</div>
+        <a class="g-link" href="examples/meal-timeline.html" target="_blank">▶ 예시 열어보기</a>
+        <button class="pbtn" data-p="timeline">📋 전용 프롬프트 복사</button>
+      </div>
+      <div class="gcard">
+        <div class="g-top"><span class="num on">7</span><span class="g-type">웹 시뮬레이션</span></div>
+        <span class="gtag edu">교육 소재</span>
+        <div class="g-ex">예시: <b>오늘 내가 먹은 나트륨 계산기</b></div>
+        <div class="g-prep">📎 준비물: <b>식단표</b> + (선택) 나트륨 포함 영양소 분석 자료</div>
+        <a class="g-link" href="examples/sodium-calculator.html" target="_blank">▶ 예시 열어보기</a>
+        <button class="pbtn" data-p="sim">📋 전용 프롬프트 복사</button>
+      </div>
+      <div class="gcard">
+        <div class="g-top"><span class="num on">8</span><span class="g-type">웹 퀴즈</span></div>
+        <span class="gtag edu">교육 소재</span>
+        <div class="g-ex">예시: <b>알레르기 번호 도전 골든벨</b></div>
+        <div class="g-prep">📎 준비물: <b>식단표</b>(알레르기 번호 포함)</div>
+        <a class="g-link" href="examples/allergy-goldenbell.html" target="_blank">▶ 예시 열어보기</a>
+        <button class="pbtn" data-p="quiz">📋 전용 프롬프트 복사</button>
+      </div>
+      <div class="gcard">
+        <div class="g-top"><span class="num on">9</span><span class="g-type">웹 게임</span></div>
+        <span class="gtag edu">교육 소재</span>
+        <div class="g-ex">예시: <b>영양 균형 식판 채우기 게임</b></div>
+        <div class="g-prep">📎 준비물: <b>식단표 + 영양표시제</b></div>
+        <a class="g-link" href="examples/tray-game.html" target="_blank">▶ 예시 열어보기</a>
+        <button class="pbtn" data-p="game">📋 전용 프롬프트 복사</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ② 어떤 재료를 넣을까 ═══ -->
+<section id="source">
+  <div class="wrap">
+    <div class="sec-eyebrow"><span class="step">STEP 2</span> 어떤 재료를 넣을까요?</div>
+    <h2 class="disp">영양교사 책상 위에 이미 다 있습니다</h2>
+    <p class="sec-sub">따로 자료를 만들 필요 없어요. 지금 갖고 있는 파일과 텍스트가 그대로 재료가 됩니다.</p>
+
+    <div class="mats">
+      <div class="mat">📅 <b>월간 식단표</b><small>나이스 엑셀 그대로 · 스마트 월간식단 뷰어에서 복사</small></div>
+      <div class="mat">🍽️ <b>주간 영양표시제·영양정보</b><small>주간 메뉴+알레르기+영양소 10종이 한 장에 — 최고의 재료</small></div>
+      <div class="mat">📖 <b>영양교육 자료</b><small>수업 지도안, 교육청 배포 자료, 보도자료</small></div>
+      <div class="mat">📬 <b>가정통신문 원고</b><small>기존에 쓰던 안내문 텍스트</small></div>
+      <div class="mat">📊 <b>만족도 조사 결과</b><small>선호도조사기 결과, 설문 표</small></div>
+      <div class="mat">🔗 <b>급식소리함 도구 화면</b><small>아카이브 리포트, 뷰어 링크 등</small></div>
+    </div>
+
+    <div class="tipnote" style="margin-top:16px;">🧒 <b>유치원 선생님도 똑같이!</b> 유치원 나이스의 월간식단표 엑셀을 그대로 첨부하면 됩니다. 전용 프롬프트들은 식단표에서 학교급(유치원~고교)을 파악해 <b>대상 연령에 맞는 어휘·난이도</b>로 자동 조정됩니다.</div>
+  </div>
+</section>
+
+<!-- ═══ ③ 어떻게 요청할까 ═══ -->
+<section id="prompt">
+  <div class="wrap">
+    <div class="sec-eyebrow"><span class="step">STEP 3</span> 어떻게 요청할까요?</div>
+    <h2 class="disp">복사해서 젬에 붙여넣으세요</h2>
+    <p class="sec-sub">아래 두 가지는 어떤 재료에나 쓰는 <b>만능형</b>입니다. 콘텐츠별로 정교하게 다듬어진 <b>전용 프롬프트</b>는 위 갤러리 카드의 📋 버튼에 있어요.</p>
+
+    <div class="prompt-block">
+      <div class="prompt-head"><b>🤖 기본형 — 처음이라면 이걸로</b><button class="copybtn" data-copy="p1">복사</button></div>
+      <div class="prompt-body" id="p1">너는 학교급식 콘텐츠를 잘 만드는 교육용 웹 개발자야. 내가 제공하는 급식 자료를 바탕으로 학생들을 위한 결과물(웹 문서, 웹 인포그래픽, 웹 퀴즈, 웹 게임 등)을 하나의 html 파일로 만들어줘. 디자인은 세련되게, 이모지를 넣고 인터랙티브한 요소도 추가해줘.
+---
+(여기에 식단표·영양교육 자료 등 재료 붙여넣기)</div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-head"><b>🧩 구조화형 — 결과물을 정교하게</b><button class="copybtn" data-copy="p2">복사</button></div>
+      <div class="prompt-body" id="p2"># 역할
+- 너는 영양교육 전문가이자 교육용 웹 콘텐츠 개발자야.
+# 목표
+- 내가 제공할 급식 자료를 바탕으로 교육용 웹자료(웹 문서, 웹 인포그래픽, 웹 대시보드, 웹 시뮬레이션, 웹 퀴즈, 웹 게임 등)를 하나의 html로 만들어줘.
+# 맥락
+- 고등학생을 위한 급식·영양 교육 자료야. (대상 학년에 맞게 수정)
+# 지침
+- 입력한 자료의 내용만 사용해서 만들어줘.
+- 하나의 html 파일로 만들어줘.
+- 디자인은 현대적으로 세련되게, 흰 배경에 깔끔한 스타일로 만들어줘.
+- 적절한 이모지를 넣고, 인터랙티브한 요소를 넣고, 휴대폰 화면에 맞는 반응형으로 만들어줘.
+---
+(여기에 식단표·영양교육 자료 등 재료 붙여넣기)</div>
+    </div>
+
+    <div class="tipnote">💡 <b>품질을 높이는 키워드</b> — 디자인: 「현대적인」 「세련된」 「심플한」 / 상호작용: 「인터랙티브」 「클릭 가능한」 「휴대폰 반응형」 · 결과가 아쉬우면 "이 부분을 이렇게 바꿔줘"라고 코드를 다시 주며 요청하세요.</div>
+  </div>
+</section>
+
+<!-- ═══ ④ 학생 휴대폰에 띄우기 ═══ -->
+<section id="publish">
+  <div class="wrap">
+    <div class="sec-eyebrow"><span class="step">STEP 4</span> 만든 자료, 학생 휴대폰에 띄우기</div>
+    <h2 class="disp">저장 → 게시 → QR, 딱 세 걸음</h2>
+    <p class="sec-sub">지난 연수의 그 예고편, 여기서 이어집니다 😉 완성된 콘텐츠를 링크 하나로 학생들에게 나눠 주세요.</p>
+
+    <div class="steps">
+      <div class="stp"><b>📁 HTML로 저장</b><p>젬이 준 코드를 <b>전체 복사</b> → 메모장(또는 윈도우 메모장·맥 텍스트 편집기)에 붙여넣기 → "다른 이름으로 저장"에서 파일 이름을 <b>index.html</b>로, 파일 형식은 "모든 파일"로 저장 → 저장된 파일을 더블클릭하면 크롬에서 바로 열려요.</p></div>
+      <div class="stp"><b>✏️ 마음에 안 들면 수정</b><p>큰 수정(디자인 변경, 기능 추가, 오류)은 코드를 다시 젬에 붙여넣고 "이 부분을 이렇게 바꿔줘"라고 구체적으로 요청하는 게 빨라요. 오타나 문구 정도는 메모장에서 직접 고쳐도 돼요 — 줄바꿈은 &lt;br&gt;, 굵게는 &lt;strong&gt;글자&lt;/strong&gt;.</p></div>
+      <div class="stp"><b>🚀 Netlify에 올리기</b><p>netlify.com 가입·로그인 → Projects 탭 → index.html이 든 <b>폴더째</b> 드래그해 업로드 → 몇 초 뒤 나만의 웹 주소(○○○.netlify.app)가 생겨요. 파일을 고쳐서 같은 자리에 다시 올리면 주소는 그대로 유지됩니다.</p></div>
+      <div class="stp"><b>📱 QR로 나눠 주기</b><p>주소를 복사해 QR코드 생성 사이트(또는 급식소리함 도구)에 붙여넣어 QR 이미지를 만들고, 수업 PPT·교실 화면·급식실 게시판에 붙이면 학생들이 휴대폰 카메라로 바로 접속해요.</p></div>
+    </div>
+
+    <div class="tipnote" style="margin-top:16px;">💡 <b>더 잘 뽑는 팁</b> — 같은 프롬프트라도 결과는 매번 달라요. 두세 번 생성해 비교해서 마음에 드는 걸 고르세요. "하나의 html"이란 구조(html)+디자인(css)+동작(js)이 한 파일에 다 들어 있다는 뜻이라, 파일 하나만 옮기면 어디서든 작동합니다.</p></div>
+
+    <div class="qrhint">🔮 <b>수업 장면 상상해 보세요</b> — 영양교육 시간, 칠판의 QR 하나로 반 전체가 '나트륨 계산기'를 각자 휴대폰에서 실행합니다. 종이 활동지 인쇄는 이제 선택입니다.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    급식"소리"함 · <a href="https://geupsik-soriham.vercel.app">geupsik-soriham.vercel.app</a> — 젬스 활용 '식단+교육' 자료 만들기
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.copybtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const txt=document.getElementById(btn.dataset.copy).innerText;
+    navigator.clipboard.writeText(txt).then(()=>{
+      btn.textContent='✅ 복사됨'; btn.classList.add('done');
+      setTimeout(()=>{btn.textContent='복사'; btn.classList.remove('done');},1800);
+    });
+  });
+});
+
+/* ── 콘텐츠별 전용 프롬프트 ─────────────────
+   공통 원칙: 첨부 식단표 기반 강제 · 학교급 자동 적응 · 단일 HTML · 할루시네이션 방지 */
+const PROMPTS={
+quiz:`# 역할
+- 너는 학교급식 알레르기 교육 전문가이자 교육용 웹 퀴즈 개발자야.
+
+# 상황
+- 나는 영양(교)사이고, 첨부한 파일은 우리 학교(기관)의 실제 식단표야.
+- 첨부한 식단표의 학교명에서 학교급(유치원·초·중·고)을 파악하고, 대상 연령에 맞춰 만들어줘.
+- 학생들이 휴대폰으로 접속해 알레르기 표시(괄호 속 번호)를 읽는 법을 익히는 골든벨 퀴즈를 만들 거야.
+
+# 작업
+1. 첨부한 식단표에서 메뉴명과 알레르기 번호를 먼저 추출해.
+2. 추출한 실제 메뉴로 5지선다 퀴즈를 만들어. 문항 유형을 섞어줘:
+   - "○○(5.6.13)에서 13번은 무슨 재료?" (번호→재료)
+   - "새우 알레르기 학생이 피해야 할 메뉴는?" (재료→메뉴)
+   - "다음 중 우유(2번)가 들어간 메뉴는?" (번호 찾기)
+3. 각 문항에 정답 클릭 시 바로 나오는 1~2문장 해설을 달아줘.
+4. 마지막에 점수별 결과 화면을 만들어줘 (만점의 90% 이상 "🔔 골든벨! 알레르기 마스터" / 60~89% "🥈 예비 마스터" / 그 아래 "🌱 다시 도전!").
+5. 학교급에 맞게 조정해줘:
+   - 유치원·초등 저학년: 문항 5개, 쉬운 어휘, 이모지 크게, "우유가 들어간 음식은 뭘까요? 🥛" 수준
+   - 초등 고학년~중등: 문항 10개, 기본 번호 읽기 중심
+   - 고등: 문항 10개, 복합 표기(5.6.9.13.18)와 원리를 묻는 문제까지
+
+# 제약
+- 반드시 첨부한 식단표에 실제로 있는 메뉴만 사용할 것. 없는 메뉴를 지어내지 말 것.
+- 알레르기 번호는 아래 공식 표만 따를 것. 식단표와 표가 어긋나면 식단표의 표기를 우선하고 해설에 한 줄로 밝힐 것:
+  1.난류 2.우유 3.메밀 4.땅콩 5.대두 6.밀 7.고등어 8.게 9.새우 10.돼지고기 11.복숭아 12.토마토 13.아황산류 14.호두 15.닭고기 16.쇠고기 17.오징어 18.조개류(굴·전복·홍합 포함) 19.잣
+- 확실하지 않은 정보는 추측하지 말고 그 문항을 만들지 말 것.
+- 학교급이 파악되지 않으면 먼저 "어느 학교급인가요?"라고 한 번만 물어볼 것.
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 휴대폰 세로 화면 기준 반응형, 흰 배경에 깔끔하고 밝은 디자인, 이모지 활용.
+- 시작 화면(제목+학교명+시작 버튼) → 문항 1개씩 진행 → 결과 화면 구조.`,
+
+sim:`# 역할
+- 너는 영양교육 전문가이자 인터랙티브 웹 시뮬레이션 개발자야.
+
+# 상황
+- 나는 영양(교)사이고, 첨부한 파일은 우리 학교(기관)의 실제 식단표(가능하면 영양정보 포함)야.
+- 첨부한 식단표의 학교명에서 학교급(유치원·초·중·고)을 파악하고, 대상 연령에 맞춰 만들어줘.
+- 학생들이 휴대폰으로 오늘 먹은 것을 골라 나트륨 섭취량을 스스로 확인하는 "나트륨 계산기"를 만들 거야.
+
+# 작업
+1. 첨부한 식단표에서 오늘(또는 내가 지정한 날짜)의 메뉴를 추출해.
+2. 화면 상단에 고정된 나트륨 게이지를 만들어줘: 합계 mg / 하루 목표 mg, 진행 바, 구간별 색·응원 문구(여유→주의→초과).
+3. 하루 목표는 아래 표(2025 한국인 영양소 섭취기준, 만성질환위험감소섭취량)에서 학교급에 맞게 자동 선택할 것:
+   - 유치원(3~5세): 1,500mg / 초등 저학년(6~8세): 1,700mg / 초등 고학년(9~11세): 2,000mg / 중·고교(12세 이상): 2,300mg
+   - 초등학교는 화면에 "저학년(1~3학년)/고학년(4~6학년)" 선택 버튼을 두어 목표(1,700/2,000mg)를 전환할 수 있게 할 것.
+   - 나이(학교급)를 바꾸면 급식 메뉴의 나트륨도 배식량 비율로 함께 조정할 것 (학교급식 한 끼 에너지 기준량 비율 근거: 유치원 45% · 초1~3 60% · 초4~6 70% · 중고등 100%). 간식류(포장 제품)는 조정하지 말 것.
+4. "오늘의 급식" 목록: 메뉴별 1인 배식량 기준 나트륨을 표시하고, 누르면 게이지에 더해지게. 첨부 자료에 나트륨 값이 포함돼 있으면(나이스 영양소 분석 자료 등) 그 값을 쓰고, 없으면(주간 영양표시제 표준 양식에는 나트륨이 없음) 학교급식 표준 레시피 기준 추정치를 쓰되 화면에 "추정치"임을 명시할 것.
+5. "급식 말고 이런 것도 먹었다면?" 간식 목록: 학교급에 맞는 간식으로 구성(유치원: 젤리·요구르트·치즈 등 / 초중고: 컵라면·떡볶이·치킨 등). 라면은 "국물까지"와 "국물 남김" 두 항목으로 나눠 국물의 나트륨을 체감하게 할 것.
+6. "📷 직접 찍고 입력하기" 섹션: 카메라 촬영 버튼(input type=file, capture 사용)으로 과자·음료의 영양정보표를 찍고, 학생이 사진에서 나트륨 값을 눈으로 찾아 직접 입력해 게이지에 더하는 구조로 만들 것.
+   - 중요: 사진을 자동 인식(OCR)하지 말 것. 학생이 영양표시를 직접 읽는 행위 자체가 교육 목표임.
+7. 학교급에 맞게 조정해줘:
+   - 유치원·초등 저학년: 쉬운 어휘("짠맛 점수"), 큰 버튼과 이모지, 항목 수 축소
+   - 중·고등: 수치 중심, 국물·가공식품의 나트륨 원리를 짚는 한 줄 팁 포함
+
+# 제약
+- 반드시 첨부한 식단표에 실제로 있는 메뉴만 급식 목록에 사용할 것.
+- 나트륨 수치를 지어내지 말 것. 근거가 약한 값은 "추정치"로 표시하고, 화면 하단에 기준 출처(2025 KDRIs)를 명시할 것.
+- 학교급이 파악되지 않으면 먼저 "어느 학교급인가요?"라고 한 번만 물어볼 것.
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 휴대폰 세로 화면 기준 반응형, 흰 배경에 깔끔하고 밝은 디자인.
+- 게이지는 스크롤해도 상단에 고정(sticky)할 것.`,
+
+info:`# 역할
+- 너는 영양 데이터를 잘 읽는 영양교사이자 인포그래픽 디자이너야.
+
+# 상황
+- 나는 영양(교)사이고, 첨부한 파일은 우리 학교(기관)의 학교급식 영양표시제(또는 주간 식단·영양 자료)야.
+- 첨부한 자료의 학교명에서 학교급(유치원·초·중·고)을 파악하고, 대상에 맞춰 만들어줘.
+- 학생·학부모가 휴대폰으로 보는 "우리 학교 급식 일주일 영양 리포트" 인포그래픽을 만들 거야.
+
+# 작업
+1. 첨부한 자료에서 기간, 요일별 메뉴, 요일별 영양량(에너지·탄수화물·단백질·지방·비타민·무기질 등), 기준량(평균필요량·권장섭취량)을 추출해.
+2. 다음 구성으로 시각화해줘:
+   - 히어로 숫자: 주간 평균 에너지와 기준량 대비 % (기준량의 ±10%면 ✅ 표시)
+   - 요일별 에너지 가로 막대 차트: 적정 범위(기준량 ±10%)를 점선 밴드로 표시, 최고·최저 요일 색깔 강조, 각 막대 아래 그날 대표 메뉴 1~3개 표기
+   - 탄:단:지 에너지 구성비 누적 막대 + 적정 비율 범위(탄수화물 50~65 / 단백질 10~20 / 지방 15~30, 2025 한국인 영양소 섭취기준) 병기
+   - 영양소 충족률 카드 그리드: 주간 평균 ÷ 기준량 × 100, 100% 이상 초록·80~99% 노랑·80% 미만 빨강
+   - "이번 주 영양 MVP" 카드 3~4개: 특정 영양소가 유독 높았던 요일과 그 이유가 된 메뉴를 연결해 재미있게
+   - 충족률이 낮은 영양소가 있으면 경고 대신 "영양선생님의 간식 추천" 카드로 풀 것: "이번 주는 ○○가 조금 아쉬웠어요. 간식으로 ○○가 가득한 △△ 어때요?" 톤으로, 그 영양소가 풍부한 학생 친화적 간식 2~4가지를 추천 (부족을 지적하는 부정적 표현 금지)
+3. 학교급에 맞게 조정해줘 (유치원·초등 저학년: 쉬운 표현과 큰 이모지, % 대신 "충분해요/조금 아쉬워요" 같은 말 병기 / 중·고등: 수치 중심).
+
+# 제약
+- 반드시 첨부한 자료에 있는 수치만 사용할 것. 표에 없는 영양소나 값을 지어내지 말 것.
+- 주간 평균·구성비·충족률은 자료의 요일별 값에서 직접 계산하고, 계산 근거(예: 47.4g/21.7g)를 작게 병기할 것.
+- 자료에 나트륨이 없으면 나트륨 항목을 만들지 말 것 (주간 영양표시제 표준 양식에는 나트륨이 없음).
+- 하단에 자료 출처(학교명, 발행일, 대상 주간)를 명시할 것.
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 휴대폰 세로 화면 기준 반응형, 흰 배경에 깔끔하고 밝은 디자인, 이모지 활용.
+- 막대가 스르륵 차오르는 가벼운 등장 애니메이션 포함.`,
+
+cardnews:`# 역할
+- 너는 식재료 스토리텔링을 잘하는 영양교사이자 카드뉴스 디자이너야.
+
+# 상황
+- 나는 영양(교)사이고, 카드뉴스로 소개할 제철 식재료(또는 식단표 속 식재료)를 알려줄 거야: [식재료 이름과 시기 입력, 예: 3월의 딸기]
+- 식단표를 첨부하면 학교명에서 학교급(유치원·초·중·고)을 파악하고, 그 식단에 실제로 나오는 식재료 중에서 소재를 골라줘.
+- 학생들이 휴대폰으로 옆으로 넘겨 보는 인스타그램 스타일 웹 카드뉴스를 만들 거야.
+
+# 작업
+1. 카드 7~8장으로 구성해줘:
+   - 표지: 큰 이모지 + "○월의 제철 식재료" 제목 + 스와이프 유도 문구
+   - 왜 지금이 제철인지 (재배·계절 이야기)
+   - 영양 이야기 (대표 영양소와 하루 권장량 대비 환산 — "딸기 10알 = 하루 비타민C" 식의 한 줄 환산)
+   - 고르는 법 / 보관·세척법 (실생활 팁)
+   - 깜짝 퀴즈 1장 (3지선다, 정답 클릭 시 해설 표시)
+   - 마무리: "이번 주 급식에서 만나요" + 영양선생님 서명 톤
+2. 각 카드는 큰 이모지 1개 + 짧은 제목 + 2~3문장 본문으로, 한 장에 메시지 하나만 담아줘.
+3. 학교급에 맞게 조정해줘 (유치원·초등 저학년: 의성어·의태어와 쉬운 문장 / 중·고등: 영양 수치와 원리 포함).
+
+# 제약
+- 영양 수치는 국가표준식품성분표 등 공신력 있는 근거가 있는 값만 쓰고, 하단에 근거를 표기할 것. 확실하지 않은 수치는 쓰지 말 것.
+- 식재료의 효능을 과장하지 말 것 ("암 예방" 같은 의학적 단정 금지).
+- 식단표를 첨부한 경우, 메뉴 이름에 직접 드러난 식재료만 소재로 삼을 것 (학교마다 레시피가 다르므로 이름에 없는 재료를 추측하지 말 것).
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 좌우 스와이프(scroll-snap)로 넘기는 카드 구조 + 하단 도트 인디케이터.
+- 휴대폰 세로 화면 기준, 식재료에 어울리는 색감(딸기=핑크 등), 이모지 크게.`,
+
+calendar:`# 역할
+- 너는 식재료 이야기를 잘 들려주는 영양교사이자 웹 콘텐츠 개발자야.
+
+# 상황
+- 나는 영양(교)사이고, 첨부한 파일은 우리 학교(기관)의 월간식단표야.
+- 첨부한 식단표의 학교명에서 학교급(유치원·초·중·고)을 파악하고, 대상에 맞춰 만들어줘.
+- 매일 게시하는 "오늘의 식재료 한 입" 카드 캘린더를 만들 거야: 날짜를 누르면 그날 급식 속 식재료 이야기가 나오는 한 달짜리 콘텐츠.
+
+# 작업
+1. 첨부한 식단표에서 급식일과 그날의 메뉴를 모두 추출해.
+2. 급식일마다 그날 메뉴에 실제로 들어가는 식재료를 1가지씩 골라줘. 한 달 안에서 같은 식재료가 반복되지 않게 하고, 이야깃거리(제철·유래·별명·알레르기 번호 등)가 있는 식재료를 우선 골라줘.
+3. 화면 구성:
+   - 상단: 날짜 버튼 그리드 (요일+날짜+식재료 이모지). 급식일만 만들고, 급식 없는 날은 넣지 말 것.
+   - 날짜를 누르면 카드 1장: 큰 이모지 + 식재료 이름 + "오늘 급식 ○○에 들어있어요" 배지 + 영양 포인트 2~3문장 + 재미 상식 상자 1개
+4. 재미 상식에는 알레르기 번호(예: 메밀=3번, 새우=9번), 지역·유래 이야기, 이름의 비밀 같은 학생이 좋아할 소재를 활용해줘.
+5. 학교급에 맞게 조정해줘 (유치원·초등 저학년: 의성어와 쉬운 문장, 이모지 크게 / 중·고등: 영양소·원리 포함).
+
+# 제약
+- 반드시 첨부한 식단표에 실제로 있는 메뉴만 사용할 것.
+- 식재료는 메뉴 이름에 직접 드러난 것만 고를 것 (예: "코다리콩나물찜"→코다리 O / "육개장"→고사리 X). 학교마다 레시피가 다르므로 이름에 없는 재료를 추측하지 말 것.
+- 메뉴명에서 식재료가 드러나지 않는 날은 카드를 만들기 전에 나에게 "○일 △△ 메뉴의 주재료가 무엇인가요?"라고 물어볼 것.
+- 알레르기 관련 서술은 그날 식단표의 알레르기 번호 표기와 일치할 때만 쓸 것 (예: 메뉴에 (9)가 표기된 경우에만 "새우가 들어있어요").
+- 영양 정보는 공신력 있는 근거가 있는 내용만 쓰고, 효능을 과장하지 말 것 ("암 예방" 같은 의학적 단정 금지).
+- 알레르기 번호는 공식 19종 번호 체계만 따를 것.
+- 급식일수가 많아 분량이 부족하면 임의로 날짜를 빼지 말고, "이어서 만들어줘"라고 요청하라고 나에게 알려줄 것.
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 휴대폰 세로 화면 기준 반응형, 흰 배경에 깔끔하고 밝은 디자인.
+- 날짜 버튼은 주 단위 줄바꿈으로 달력처럼 배치하고, 카드 전환에 가벼운 등장 애니메이션 포함.`,
+
+game:`# 역할
+- 너는 영양교육 전문가이자 교육용 웹 게임 개발자야.
+
+# 상황
+- 나는 영양(교)사이고, 첨부한 파일은 우리 학교(기관)의 식단표와 학교급식 영양표시제야. 반드시 이 두 자료(또는 그중 하나)를 기반으로 만들어줘.
+- 첨부한 자료의 학교명에서 학교급(유치원·초·중·고)을 파악하고, 대상 연령에 맞춰 만들어줘.
+- 학생들이 우리 학교 실제 메뉴로 균형 잡힌 한 끼를 스스로 구성해보는 "영양 균형 식판 채우기" 게임을 만들 거야.
+
+# 작업
+1. 첨부한 식단표(영양표시제)에서 해당 기간의 메뉴를 전부 추출하고, 메뉴 이름을 근거로 밥 / 국·찌개 / 주찬 / 부찬 / 김치 / 후식 카테고리로 분류해. 분류가 애매한 메뉴는 나에게 물어봐.
+2. 화면 구성:
+   - 상단: 6칸 식판 (밥·국·주찬·부찬·김치·후식) — 칸을 누르면 그 카테고리 음식 목록으로 이동
+   - 하단: 카테고리 탭 + 음식 카드 목록 (이모지 + 메뉴명 + 식단표의 알레르기 번호 그대로 표기)
+   - 음식을 누르면 식판에 담기고, 같은 칸은 마지막 선택으로 교체
+3. 담긴 음식마다 "양" 선택 요소를 넣어줘: 🥄적게 / 🍚알맞게(기본) / ⛰️많이 3단계 버튼. 구체적인 그램 수는 쓰지 말고, "알맞게 = 급식실 배식량"이라는 메시지를 팁에 포함할 것.
+4. "영양선생님의 평가" 버튼: 채운 구성과 양 조절에 따라 별점(1~3개)과 코멘트·팁을 보여줘. 평가 기준은 칸을 골고루 채웠는지, 단백질 주찬·채소 부찬·생과일 후식을 선택했는지, 양을 알맞게 담았는지(과식·결식 팁 포함) 등 식품 구성 원칙으로 하고, 부족한 부분은 혼내지 말고 응원하는 톤의 팁으로 알려줄 것.
+5. 학교급에 맞게 조정해줘:
+   - 유치원·초등 저학년: 식판 4칸(밥·국·반찬·후식)으로 단순화, "골고루 담기" 중심, 큰 이모지와 쉬운 말
+   - 중·고등: 6칸 + 구성 원칙(단백질·채소·과일) 기반 점수
+
+# 제약
+- 음식 목록은 반드시 첨부한 식단표에 실제로 있는 메뉴만 사용할 것. 일반적인 음식을 지어내 넣지 말 것.
+- 알레르기 번호는 첨부 자료의 표기를 그대로 옮기고, 임의로 추가·삭제하지 말 것.
+- 메뉴별 칼로리·나트륨 같은 세부 영양 수치는 첨부 자료에 없으면 표시하지 말 것 (점수는 수치가 아니라 식품 구성 원칙으로만 계산).
+- 평가 코멘트에 특정 음식을 "나쁜 음식"으로 낙인찍는 표현을 쓰지 말 것.
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 휴대폰 세로 화면 기준 반응형, 흰 배경에 밝고 게임다운 디자인, 이모지 활용.
+- 평가 결과에 가벼운 등장 애니메이션, "다시 담기" 버튼 포함.`,
+
+doc:`# 역할
+- 너는 학교 알레르기 안내 문서를 잘 만드는 영양교사이자 웹 문서 개발자야.
+
+# 상황
+- 나는 영양(교)사이고, 첨부한 파일은 우리 학교(기관)의 월간식단표(알레르기 번호 포함)야.
+- 첨부한 식단표의 학교명에서 학교급(유치원·초·중·고)을 파악하고, 대상에 맞춰 만들어줘.
+- 학생·학부모가 휴대폰으로 보는 인터랙티브 "급식 알레르기 안내문"을 만들 거야. 종이 안내문과 달리, 본인의 알레르기 번호를 누르면 피해야 할 메뉴가 자동으로 표시되는 게 핵심이야.
+
+# 작업
+1. 첨부한 식단표에서 기간, 날짜별 메뉴, 각 메뉴의 알레르기 번호를 전부 추출해.
+2. 화면 구성:
+   - 머리말: 학교명 + 기간 + 알레르기 표시제 한 줄 설명
+   - 번호 선택: 1~19번 칩 그리드 (번호+식품명), 여러 개 선택 가능, 다시 누르면 해제
+   - 선택 시 요약 배너: "선택한 번호가 포함된 메뉴가 이번 달 ○개 있어요" (없으면 ✅ 안심 메시지)
+   - 날짜별 식단 목록: 메뉴명 + 괄호 번호. 선택된 번호가 포함된 메뉴는 ⚠️ 붉게 강조, 나머지는 흐리게
+   - 안내 상자: 양념(새우젓 등)으로 표시되는 경우, 식단 변경 가능성, 담임·영양교사에게 알리기 안내
+   - 꼬리말: 자료 출처(발행일)와 문의처(영양교사)
+3. 학교급에 맞게 조정해줘 (유치원·초등: 학부모가 읽는 문서 톤, 그림 이모지 활용 / 중·고등: 학생이 직접 쓰는 톤).
+
+# 제약
+- 반드시 첨부한 식단표에 있는 메뉴와 알레르기 번호만 사용할 것. 번호를 임의로 추가·삭제·추측하지 말 것.
+- 알레르기 번호는 공식 19종 체계(1.난류~19.잣)만 따를 것.
+- 의학적 조언(증상 대처법 등)은 쓰지 말고, "보건교사·의사와 상담" 수준으로만 안내할 것.
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 휴대폰 세로 화면 기준 반응형, 흰 배경의 신뢰감 있는 안내문 디자인.
+- 번호 선택과 메뉴 강조가 즉시 반영되는 인터랙션.`,
+
+kitchen:`# 역할
+- 너는 학교급식 위생·배식 안전을 잘 아는 영양교사이자 웹 도구 개발자야.
+
+# 상황
+- 나는 영양(교)사이고, 첨부한 파일은 우리 학교(기관)의 식단표(알레르기 번호 포함)야.
+- 조리종사자 선생님들이 배식 전 확인하는 "알레르기 학생 배식 주의 안내"를 만들 거야. 내가 화면에서 알레르기 학생의 반·번호·알레르기 번호를 입력하면, 날짜별로 주의할 메뉴와 해당 학생이 자동 정리되는 도구형 문서야.
+
+# 작업
+1. 첨부한 식단표에서 기간, 날짜별 메뉴, 각 메뉴의 알레르기 번호를 전부 추출해.
+2. 화면 구성:
+   - 학생 등록 폼: 반 + 번호 입력칸(이름은 선택), 알레르기 번호 1~19 선택 칩(복수 선택), 추가 버튼
+   - 등록 학생 목록: 반·번호 + 알레르기 번호, 삭제 버튼
+   - 날짜별 브리핑: 날짜 탭을 누르면 그날 메뉴 중 등록 학생의 알레르기 번호가 포함된 메뉴만 ⚠️ 카드로 표시하고, 카드마다 해당 학생(반·번호)과 이유가 되는 번호를 표기. 주의 메뉴가 없는 날은 "✅ 주의 메뉴 없음"
+   - 🖨️ 인쇄 버튼: 인쇄 시 일주일(또는 한 달) 전체 브리핑이 한 번에 출력되게 (입력 폼은 인쇄에서 제외)
+3. 시작 시 예시 학생 1~2명을 (예시) 표시와 함께 넣어 사용법을 보여주고, 삭제 가능하게 할 것.
+
+# 제약
+- 반드시 첨부한 식단표에 있는 메뉴와 알레르기 번호만 사용할 것. 번호를 임의로 추가·삭제·추측하지 말 것.
+- 학생 개인정보(반·번호·알레르기)는 저장하지 말 것 — localStorage 등 어떤 저장소도 쓰지 말고, 새로고침 시 사라진다는 안내와 "조리실 내부 게시 전용, 외부 공유 금지" 개인정보 문구를 화면에 표시할 것.
+- 학생 이름은 필수 입력으로 요구하지 말 것 (반·번호만으로 식별).
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 휴대폰·태블릿 화면 기준 반응형 + 인쇄(A4) 친화 스타일(@media print).
+- 주의 메뉴 카드는 멀리서도 보이게 붉은 강조, 안심 상태는 초록으로 명확히 구분.`,
+
+timeline:`# 역할
+- 너는 급식실의 하루를 잘 아는 영양교사이자 스토리텔링 웹 개발자야.
+
+# 상황
+- 나는 영양(교)사이고, 학생들에게 급식 한 끼가 만들어지는 과정을 보여주는 세로 스크롤 타임라인을 만들 거야.
+- 우리 급식실의 실제 하루 일과를 알려줄게 (없으면 일반적인 학교 급식실 기준으로 만들되 "예시 시간"임을 표시해줘): [검수 시각, 조리 시작, 배식 시각 등 입력]
+- 학교급을 알려줄게: [유치원·초·중·고 입력] — 대상 연령에 맞춰 만들어줘.
+
+# 작업
+1. 새벽 검수부터 다음 날 준비까지 6~8단계 타임라인으로 구성해줘: 검수 → 전처리 → 조리 → 검식·보존식 → 배식 → 세척·소독 → 내일 준비.
+2. 각 단계는 시간 배지 + 이모지 + 제목 + 2~3문장 설명 + 재미 상식 상자 1개로 구성해줘.
+3. 재미 상식에는 위생 기준(검수 온도, 중심온도, 보존식, 칼·도마 색 구분, 조리 후 배식 시간 등)과 잔반 줄이기 같은 학생 실천 메시지를 녹여줘.
+4. 마지막은 "잘 먹었습니다 한마디" 같은 조리종사자 감사 메시지로 마무리해줘.
+5. 학교급에 맞게 조정해줘 (유치원·초등 저학년: 의성어와 쉬운 문장, 단계 5~6개로 축소 / 중·고등: 위생 기준 수치 포함).
+
+# 제약
+- 위생 기준 수치는 학교급식 위생관리 기준으로 확립된 값만 쓸 것 (예: 가열조리 중심온도 75℃·패류 85℃에서 1분 이상, 보존식 -18℃ 이하 144시간 이상, 냉장식품 검수 10℃ 이하, 열장 보관하지 못할 경우 조리 후 2시간 이내 배식). 확실하지 않은 수치는 쓰지 말 것.
+- 시간을 내가 알려주지 않았다면 "예시 시간"임을 화면에 명시할 것.
+- 조리종사자를 희화화하지 말고 존중하는 톤을 유지할 것.
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 휴대폰 세로 화면 기준, 세로 타임라인(선+원형 아이콘) 구조.
+- 스크롤에 따라 단계가 하나씩 나타나는 등장 효과(IntersectionObserver) 포함.`,
+
+dash:`# 역할
+- 너는 급식 영양 데이터를 관리 화면으로 만드는 영양교사이자 대시보드 개발자야.
+
+# 상황
+- 나는 영양(교)사이고, 첨부한 파일은 우리 학교(기관)의 학교급식 영양표시제 여러 주(또는 나이스 영양소 분석 자료)야.
+- 식단 검토·보고·연간 관리에 쓰는 "급식 영양 대시보드"를 만들 거야. 학생용 인포그래픽이 아니라 영양(교)사가 보는 관리 화면이야.
+
+# 작업
+1. 첨부한 자료에서 기간, 요일(날짜)별 영양량, 기준량(평균필요량·권장섭취량), 메뉴별 알레르기 번호를 추출해. 여러 주를 첨부했으면 주차별·월간으로 집계해줘.
+2. 화면 구성:
+   - 상단 KPI 카드 4개: 평균 에너지(기준 대비 %), 에너지 구성비(탄:단:지, 적정 범위 판정), 충족 영양소 개수, 관심(부족) 영양소
+   - 영양소별 추이 차트: 영양소 선택 버튼 → 요일(주차)별 막대 + 권장 100% 기준선, 값·색상(충족 초록/80~99 노랑/80 미만 빨강) 표시
+   - 충족률 히트맵: 영양소 × 요일(주차) 표, 같은 색상 규칙
+   - 알레르기 번호 출현 TOP 5: 기간 내 메뉴에 표시된 번호 빈도 막대
+3. 부족 영양소는 "관심 영양소"로 표현하고 보완 아이디어(간식 추천·식단 조정)를 한 줄 제안해줘. 부정적 낙인 표현은 쓰지 말 것.
+
+# 제약
+- 반드시 첨부한 자료에 있는 수치만 사용할 것. 평균·충족률·빈도는 자료의 값에서 직접 계산하고 계산 방식을 화면에 명시할 것.
+- 자료에 없는 영양소(예: 나트륨이 없는 영양표시제)는 항목을 만들지 말 것.
+- 자료가 1주뿐이면 "주간 대시보드"로 만들고, 여러 주 첨부 시 월간 집계가 된다는 안내를 화면에 표시할 것.
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 휴대폰·태블릿 모두 보기 좋은 반응형, 관리 화면다운 정돈된 카드 레이아웃.
+- 차트 전환·막대 등장에 가벼운 애니메이션 포함.`,
+
+slides:`# 역할
+- 너는 영양교육 수업을 잘 설계하는 영양교사이자 프레젠테이션 디자이너야.
+
+# 상황
+- 나는 영양(교)사이고, 수업 주제와 교육 내용을 알려줄게: [주제와 핵심 내용 입력, 예: 나트륨 줄이기 / 지도안·교육 자료 텍스트 첨부 가능]
+- 학교급을 알려줄게: [유치원·초·중·고 입력] — 대상 연령의 어휘와 난이도에 맞춰줘.
+- 교실 화면에 띄워 진행하는 웹 슬라이드(발표자료)를 만들 거야. PPT 없이 링크 하나로 열리는 게 장점이야.
+
+# 작업
+1. 슬라이드 9~12장으로 수업 흐름을 구성해줘: 표지(호기심 유발 질문) → 개념 → 기준·수치 → 현실·문제 → 사례 → 실천 방법 → 퀴즈 1~2장 → 마무리(오늘의 실천 다짐).
+2. 각 슬라이드는 한 장에 메시지 하나: 큰 제목 + 짧은 본문 2~3문장 + 강조 상자(수치·팁) 구조로.
+3. 수업 중 상호작용을 위해 퀴즈 슬라이드는 선택지를 클릭하면 정답·해설이 표시되게 해줘.
+4. 넘김 방식: 좌우 방향키, 화면 좌/우 클릭, 모바일 스와이프 모두 지원 + 상단 진행바 + "현재/전체" 페이지 표시.
+5. 우리 학교 급식 메뉴(식단표 첨부 시)를 사례로 자연스럽게 연결해줘.
+6. 우리 학교(급식실)의 실천 내용을 알려주면 "우리 급식실은 이미 실천 중" 슬라이드로 넣어줘 (예: 염도계로 국 염도 0.6~0.7% 관리, '오늘의 염도' 게시, 국 자율의 날, 튀김류 주 2회 이하 — 시도교육청 학교급식 기본방향 근거). 급식실의 노력과 학생의 실천을 연결하는 메시지로.
+
+# 제약
+- 영양 기준·수치는 2025 한국인 영양소 섭취기준 등 공신력 있는 근거가 있는 값만 쓰고, 기준명을 슬라이드에 병기할 것. 확실하지 않은 수치·통계는 쓰지 말 것.
+- 질병을 위협적으로 표현하지 말고("이렇게 먹으면 큰일나요" 금지), 실천 가능성을 강조하는 긍정적 톤으로.
+- 특정 음식을 "나쁜 음식"으로 낙인찍지 말 것 (양과 습관의 문제로 설명).
+
+# 형식
+- 하나의 html 파일 (html+css+js 포함, 외부 라이브러리 없이).
+- 교실 큰 화면(16:10 비율 카드)과 휴대폰 모두에서 보기 좋게 반응형(clamp 글자 크기).
+- 슬라이드 전환에 가벼운 애니메이션, 어두운 배경 위 흰 슬라이드 카드 스타일.`
+};
+
+document.querySelectorAll('.pbtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const p=PROMPTS[btn.dataset.p];
+    if(!p)return;
+    navigator.clipboard.writeText(p).then(()=>{
+      const orig=btn.textContent;
+      btn.textContent='✅ 복사 완료! 젬에 붙여넣으세요';
+      btn.classList.add('done');
+      setTimeout(()=>{btn.textContent=orig;btn.classList.remove('done');},2200);
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍱 영양 균형 식판 채우기 | 동탄중앙고</title>
+<style>
+:root{--blue:#2563eb;--blue-soft:#eaf1ff;--ink:#17244a;--sub:#64748b;--line:#dbe6f7;
+--ok:#0ca678;--warn:#f59e0b;--gold:#ffb020;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:linear-gradient(180deg,#f2f7ff,#fff 40%);color:var(--ink);display:flex;justify-content:center;min-height:100vh;line-height:1.55;}
+.app{width:100%;max-width:440px;padding:22px 16px 44px;}
+
+header{text-align:center;margin-bottom:14px;}
+header .badge{display:inline-block;background:var(--blue-soft);color:var(--blue);font-weight:800;font-size:12px;padding:4px 13px;border-radius:99px;margin-bottom:8px;}
+header h1{font-size:23px;}
+header h1 b{color:var(--blue);}
+header p{font-size:12.5px;color:var(--sub);margin-top:4px;word-break:keep-all;}
+
+/* 식판 */
+.tray{background:#eef3fc;border:2px solid #cfdcf3;border-radius:20px;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:8px;}
+.slot{background:#fff;border:1.5px dashed #c3d2ec;border-radius:14px;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6px 4px;cursor:pointer;transition:all .15s;}
+.slot .sl{font-size:10.5px;font-weight:800;color:#9db1d4;letter-spacing:.05em;}
+.slot .se{font-size:24px;line-height:1.2;min-height:28px;}
+.slot .sn{font-size:10.5px;font-weight:700;color:var(--ink);word-break:keep-all;line-height:1.25;}
+.slot.filled{border-style:solid;border-color:var(--blue);background:var(--blue-soft);}
+.amt{margin-top:3px;border:1px solid var(--blue);background:#fff;color:var(--blue);font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:99px;cursor:pointer;font-family:inherit;}
+.amt.lo{border-color:var(--warn);color:#b0700a;background:#fff7e8;}
+.amt.hi{border-color:#e5484d;color:#e5484d;background:#fdeeee;}
+.slot.big{grid-column:span 1;}
+.slot.rice{grid-row:span 1;}
+.slot:nth-child(1){grid-column:1/3;}  /* 밥 넓게 */
+.trayhint{text-align:center;font-size:11px;color:var(--sub);margin-bottom:14px;}
+
+/* 카테고리 탭 + 음식 풀 */
+.cats{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;}
+.cats::-webkit-scrollbar{display:none;}
+.cat{flex:none;border:1.5px solid var(--line);background:#fff;color:var(--sub);font-size:12.5px;font-weight:800;padding:7px 13px;border-radius:99px;cursor:pointer;font-family:inherit;}
+.cat.on{border-color:var(--blue);background:var(--blue);color:#fff;}
+.pool{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;}
+.food{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 11px;cursor:pointer;text-align:left;font-family:inherit;transition:all .12s;}
+.food:hover{border-color:var(--blue);}
+.food .fe{font-size:20px;}
+.food .fn{display:block;font-size:12.5px;font-weight:700;color:var(--ink);word-break:keep-all;line-height:1.3;}
+.food .fa{display:block;font-size:10px;color:#9aa7c2;}
+.food.picked{border-color:var(--blue);background:var(--blue-soft);}
+
+/* 평가 */
+.judge{border:none;width:100%;background:var(--blue);color:#fff;font-size:16px;font-weight:800;padding:15px;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 6px 16px rgba(37,99,235,.3);}
+.judge:disabled{background:#c3d2ec;box-shadow:none;cursor:default;}
+.result{display:none;margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 18px;text-align:center;animation:pop .3s ease;}
+.result.show{display:block;}
+@keyframes pop{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.result .stars{font-size:38px;letter-spacing:4px;}
+.result h2{font-size:19px;margin:6px 0 4px;}
+.result .comment{font-size:13.5px;color:var(--sub);word-break:keep-all;}
+.result .comment b{color:var(--ink);}
+.tips{margin-top:12px;text-align:left;display:flex;flex-direction:column;gap:6px;}
+.tips div{font-size:12.5px;background:#fbfcff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;word-break:keep-all;}
+.retry{margin-top:12px;border:1.5px solid var(--line);background:#fff;color:var(--sub);font-size:13.5px;font-weight:700;padding:11px 22px;border-radius:11px;cursor:pointer;font-family:inherit;}
+
+footer{text-align:center;font-size:11px;color:#9aa7c2;margin-top:22px;line-height:1.7;word-break:keep-all;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <span class="badge">🏫 동탄중앙고 · 7월 첫째 주 실제 메뉴로 만든 게임</span>
+    <h1>🍱 나만의 <b>영양 균형 식판</b></h1>
+    <p>이번 주 우리 학교 급식 메뉴로 가장 균형 잡힌 한 끼를 만들어 보세요!</p>
+  </header>
+
+  <div class="tray" id="tray">
+    <div class="slot" data-cat="rice"><span class="sl">🍚 밥</span><span class="se" id="se-rice"></span><span class="sn" id="sn-rice">비어 있음</span><button class="amt" id="amt-rice" style="display:none"></button></div>
+    <div class="slot" data-cat="soup"><span class="sl">🍲 국·찌개</span><span class="se" id="se-soup"></span><span class="sn" id="sn-soup">비어 있음</span><button class="amt" id="amt-soup" style="display:none"></button></div>
+    <div class="slot" data-cat="main"><span class="sl">🍖 주찬</span><span class="se" id="se-main"></span><span class="sn" id="sn-main">비어 있음</span><button class="amt" id="amt-main" style="display:none"></button></div>
+    <div class="slot" data-cat="side"><span class="sl">🥗 부찬</span><span class="se" id="se-side"></span><span class="sn" id="sn-side">비어 있음</span><button class="amt" id="amt-side" style="display:none"></button></div>
+    <div class="slot" data-cat="kimchi"><span class="sl">🥬 김치</span><span class="se" id="se-kimchi"></span><span class="sn" id="sn-kimchi">비어 있음</span><button class="amt" id="amt-kimchi" style="display:none"></button></div>
+    <div class="slot" data-cat="dessert"><span class="sl">🍎 후식</span><span class="se" id="se-dessert"></span><span class="sn" id="sn-dessert">비어 있음</span><button class="amt" id="amt-dessert" style="display:none"></button></div>
+  </div>
+  <p class="trayhint">음식을 눌러 담고, 담긴 칸의 <b>양 버튼</b>을 눌러 적게·알맞게·많이를 정해요</p>
+
+  <div class="cats" id="cats"></div>
+  <div class="pool" id="pool"></div>
+
+  <button class="judge" id="judgeBtn" onclick="judge()" disabled>영양선생님의 평가 받기 🔍</button>
+
+  <div class="result" id="result">
+    <div class="stars" id="rStars"></div>
+    <h2 id="rTitle"></h2>
+    <p class="comment" id="rComment"></p>
+    <div class="tips" id="rTips"></div>
+    <button class="retry" onclick="resetTray()">🔁 식판 다시 담기</button>
+  </div>
+
+  <footer>음식 목록: 동탄중앙고 학교급식 영양표시제(7/6~7/10) 실제 메뉴 · 괄호는 알레르기 번호<br>급식"소리"함 × 젬스 활용 예시</footer>
+</div>
+
+<script>
+/* 이번 주 실제 메뉴 (영양표시제 기준, 알레르기 번호 포함) */
+const CATS=[["rice","🍚 밥"],["soup","🍲 국·찌개"],["main","🍖 주찬"],["side","🥗 부찬"],["kimchi","🥬 김치"],["dessert","🍎 후식"]];
+const FOODS=[
+ {c:"rice",e:"🍚",n:"현미찹쌀밥",a:"",veg:0},
+ {c:"rice",e:"🍚",n:"발아현미밥",a:"",veg:0},
+ {c:"rice",e:"🍚",n:"혼합잡곡밥",a:"(5)",veg:0},
+ {c:"rice",e:"🍚",n:"흑미기장밥",a:"",veg:0},
+ {c:"soup",e:"🥣",n:"설렁탕*소면",a:"(5.6.16)",veg:0},
+ {c:"soup",e:"🥣",n:"버섯호박된장찌개",a:"(5.6)",veg:1},
+ {c:"soup",e:"🍢",n:"꼬치어묵국",a:"(1.5.6)",veg:0},
+ {c:"soup",e:"🌿",n:"제주식고사리육개장",a:"(2.5.6.10)",veg:0},
+ {c:"soup",e:"🍜",n:"짬뽕국",a:"(5.6.9.17.18)",veg:0},
+ {c:"main",e:"🐟",n:"코다리콩나물찜",a:"(5.6.9.12.13.17.18)",veg:0,prot:1},
+ {c:"main",e:"🥩",n:"편육*상추쌈",a:"(5.6.10.13)",veg:0,prot:1},
+ {c:"main",e:"🍗",n:"닭김치찜",a:"(5.6.9.15)",veg:0,prot:1},
+ {c:"main",e:"🦐",n:"깐쇼새우떡강정",a:"(5.6.9.12.13)",veg:0,prot:1,fried:1},
+ {c:"main",e:"🌭",n:"껍질없는순대",a:"(2.5.6.10.13.16)",veg:0,prot:1},
+ {c:"side",e:"🥗",n:"참나물도토리묵무침",a:"(5.6.13)",veg:1},
+ {c:"side",e:"🥕",n:"무말랭이무침",a:"",veg:1},
+ {c:"side",e:"🫑",n:"파프리카잡채",a:"(5.6.10.13)",veg:1},
+ {c:"side",e:"🍠",n:"고구마줄기볶음",a:"(5.6)",veg:1},
+ {c:"side",e:"🍤",n:"김말이튀김",a:"(1.5.6.16)",veg:0,fried:1},
+ {c:"kimchi",e:"🥬",n:"배추김치",a:"(9)",veg:1},
+ {c:"kimchi",e:"🥒",n:"석박지",a:"(9)",veg:1},
+ {c:"kimchi",e:"💛",n:"단무지",a:"",veg:1},
+ {c:"dessert",e:"🍍",n:"파인애플 생과",a:"",veg:1,fruit:1},
+ {c:"dessert",e:"🍮",n:"사과맛푸딩",a:"(1.2.5…)",veg:0,sweet:1},
+ {c:"dessert",e:"🧃",n:"과일주스",a:"(13)",veg:0,sweet:1}
+];
+
+const tray={rice:null,soup:null,main:null,side:null,kimchi:null,dessert:null};
+const amts={rice:"ok",soup:"ok",main:"ok",side:"ok",kimchi:"ok",dessert:"ok"};
+const AMT_LABEL={lo:"🥄 적게",ok:"🍚 알맞게",hi:"⛰️ 많이"};
+const AMT_NEXT={lo:"ok",ok:"hi",hi:"lo"};
+let curCat="rice";
+
+const catsBox=document.getElementById("cats");
+CATS.forEach(([id,label],i)=>{
+  const b=document.createElement("button");
+  b.className="cat"+(i===0?" on":"");
+  b.textContent=label;
+  b.onclick=()=>{curCat=id;document.querySelectorAll(".cat").forEach(x=>x.classList.remove("on"));b.classList.add("on");renderPool();};
+  catsBox.appendChild(b);
+});
+
+function renderPool(){
+  const box=document.getElementById("pool");
+  box.innerHTML="";
+  FOODS.filter(f=>f.c===curCat).forEach(f=>{
+    const b=document.createElement("button");
+    b.className="food"+(tray[f.c]&&tray[f.c].n===f.n?" picked":"");
+    b.innerHTML=`<span class="fe">${f.e}</span><span class="fn">${f.n}</span><span class="fa">${f.a||"알레르기 표시 없음"}</span>`;
+    b.onclick=()=>{tray[f.c]=f;renderTray();renderPool();};
+    box.appendChild(b);
+  });
+}
+
+function renderTray(){
+  let filled=0;
+  for(const [cat] of CATS){
+    const f=tray[cat];
+    const slot=document.querySelector(`.slot[data-cat="${cat}"]`);
+    document.getElementById("se-"+cat).textContent=f?f.e:"";
+    document.getElementById("sn-"+cat).textContent=f?f.n:"비어 있음";
+    const amtBtn=document.getElementById("amt-"+cat);
+    if(f){
+      amtBtn.style.display="inline-block";
+      amtBtn.textContent=AMT_LABEL[amts[cat]];
+      amtBtn.className="amt"+(amts[cat]==="lo"?" lo":amts[cat]==="hi"?" hi":"");
+    }else{amtBtn.style.display="none";amts[cat]="ok";}
+    slot.classList.toggle("filled",!!f);
+    if(f)filled++;
+  }
+  document.getElementById("judgeBtn").disabled=filled===0;
+  document.getElementById("result").classList.remove("show");
+}
+
+/* 양 배지 클릭: 적게→알맞게→많이 순환 */
+document.querySelectorAll(".amt").forEach(b=>{
+  b.addEventListener("click",e=>{
+    e.stopPropagation();
+    const cat=b.id.replace("amt-","");
+    amts[cat]=AMT_NEXT[amts[cat]];
+    renderTray();
+    document.getElementById("result").classList.remove("show");
+  });
+});
+
+/* 식판 칸 누르면 해당 카테고리로 이동 */
+document.querySelectorAll(".slot").forEach(s=>{
+  s.addEventListener("click",()=>{
+    curCat=s.dataset.cat;
+    document.querySelectorAll(".cat").forEach((x,i)=>x.classList.toggle("on",CATS[i][0]===curCat));
+    renderPool();
+  });
+});
+
+function judge(){
+  let score=0;const tips=[];
+  const filled=Object.values(tray).filter(Boolean).length;
+  score+=filled*10; // 칸당 10점 (최대 60)
+  if(!tray.rice)tips.push("🍚 밥이 빠졌어요 — 에너지의 기본이에요!");
+  if(!tray.soup)tips.push("🍲 국물이 있으면 식사가 한결 든든해요.");
+  if(tray.main&&tray.main.prot){score+=15;}else if(!tray.main){tips.push("🍖 단백질 주찬을 꼭 담아요 — 근육과 성장의 재료!");}
+  if(tray.side&&tray.side.veg){score+=15;tips.push("🥗 채소 부찬 선택 아주 좋아요!");}
+  else if(tray.side&&tray.side.fried){score+=5;tips.push("🍤 튀김도 맛있지만, 다음엔 채소 무침과 번갈아 먹어봐요.");}
+  else if(!tray.side){tips.push("🥗 채소 부찬이 비었어요 — 비타민과 식이섬유 충전 기회!");}
+  if(tray.kimchi){score+=10;}
+  if(tray.dessert){
+    if(tray.dessert.fruit){score+=10;tips.push("🍍 후식으로 생과일, 최고의 선택!");}
+    else{score+=4;tips.push("🍮 달콤한 후식은 가끔만 — 생과일이 있는 날엔 과일을 먼저!");}
+  }
+  /* 양 조절 평가 */
+  const heavy=["rice","main","dessert"].filter(c=>tray[c]&&amts[c]==="hi").length;
+  const okCnt=Object.keys(tray).filter(c=>tray[c]&&amts[c]==="ok").length;
+  score+=okCnt*2;
+  if(heavy>=2){score-=8;tips.push("⛰️ 밥·주찬·후식을 다 많이 담았어요 — 과식은 졸음과 소화불량의 지름길!");}
+  if(tray.rice&&amts.rice==="lo"){tips.push("🥄 밥을 너무 적게 먹으면 오후에 힘이 빠져요 — 알맞게가 딱!");}
+  if(okCnt>=4){tips.push("👍 양 조절 훌륭해요! 급식실에서 배식해 주시는 양이 여러분 나이에 맞춘 '알맞게'랍니다.");}
+  score=Math.min(100,score);
+
+  const st=document.getElementById("rStars"),ti=document.getElementById("rTitle"),co=document.getElementById("rComment");
+  if(score>=90){st.textContent="⭐⭐⭐";ti.textContent="완벽한 균형 식판!";co.innerHTML="영양선생님도 감동한 구성이에요. <b>골고루 + 채소 + 생과일</b>, 오늘 급식 그대로 실천해 볼까요?";}
+  else if(score>=70){st.textContent="⭐⭐";ti.textContent="꽤 훌륭한 식판!";co.innerHTML="조금만 다듬으면 완벽해요. 아래 팁을 확인해 보세요!";}
+  else{st.textContent="⭐";ti.textContent="다시 도전해 볼까요?";co.innerHTML="식판의 여섯 칸이 골고루 차야 몸도 골고루 자라요!";}
+  const tipBox=document.getElementById("rTips");
+  tipBox.innerHTML="";tips.slice(0,4).forEach(t=>{const d=document.createElement("div");d.textContent=t;tipBox.appendChild(d);});
+  document.getElementById("result").classList.add("show");
+  document.getElementById("result").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function resetTray(){
+  for(const k in tray)tray[k]=null;
+  renderTray();renderPool();
+}
+
+renderPool();renderTray();
+</script>
+</body>
+</html>

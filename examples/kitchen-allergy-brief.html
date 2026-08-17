@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>👩‍🍳 조리실 알레르기 학생 안내 | 동탄중앙고</title>
+<style>
+:root{--blue:#2563eb;--blue-soft:#eaf1ff;--ink:#17244a;--sub:#64748b;--line:#dbe6f7;--red:#e5484d;--red-soft:#fdeeee;--ok:#0ca678;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:linear-gradient(180deg,#f2f7ff,#fff 35%);color:var(--ink);display:flex;justify-content:center;min-height:100vh;line-height:1.6;}
+.app{width:100%;max-width:480px;padding:24px 18px 46px;}
+
+header{text-align:center;margin-bottom:16px;}
+header .badge{display:inline-block;background:var(--blue-soft);color:var(--blue);font-weight:800;font-size:12px;padding:4px 13px;border-radius:99px;margin-bottom:10px;}
+header h1{font-size:22px;line-height:1.4;}
+header h1 b{color:var(--blue);}
+header p{font-size:12.5px;color:var(--sub);margin-top:6px;word-break:keep-all;}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px 15px;box-shadow:0 6px 20px rgba(23,36,74,.05);margin-bottom:14px;}
+.card h2{font-size:15px;margin-bottom:4px;}
+.card .csub{font-size:12px;color:var(--sub);margin-bottom:12px;word-break:keep-all;}
+
+/* 입력 폼 */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.frow input{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;width:100%;}
+.frow input:focus{outline:none;border-color:var(--blue);}
+.numpick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px;}
+.npc{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:6px 2px;text-align:center;cursor:pointer;font-family:inherit;}
+.npc .nn{display:block;font-size:13px;font-weight:800;}
+.npc .nt{display:block;font-size:9px;color:var(--sub);white-space:nowrap;overflow:hidden;}
+.npc.on{border-color:var(--red);background:var(--red);}
+.npc.on .nn,.npc.on .nt{color:#fff;}
+.addbtn{width:100%;border:none;background:var(--blue);color:#fff;font-size:14.5px;font-weight:800;padding:13px;border-radius:11px;cursor:pointer;font-family:inherit;}
+
+/* 학생 목록 */
+.stu{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:11px;padding:9px 12px;margin-bottom:7px;background:#fbfcff;}
+.stu .who{font-weight:800;font-size:13.5px;flex:none;}
+.stu .al{flex:1;font-size:12px;color:var(--red);font-weight:700;word-break:keep-all;}
+.stu .del{border:none;background:none;color:#c3cfe8;font-size:15px;cursor:pointer;padding:2px;}
+.stu.demo{border-style:dashed;}
+.stu.demo .who::after{content:" (예시)";font-size:10px;color:#9aa7c2;font-weight:600;}
+.empty{font-size:12.5px;color:#9aa7c2;text-align:center;padding:8px 0;}
+
+/* 날짜 탭 + 브리핑 */
+.daytabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px;}
+.dt{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 2px;text-align:center;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;}
+.dt small{display:block;font-size:10px;color:var(--sub);font-weight:700;}
+.dt.on{border-color:var(--blue);background:var(--blue);color:#fff;}
+.dt.on small{color:#dce8ff;}
+.brief .bm{border:1.5px solid var(--red);background:var(--red-soft);border-radius:12px;padding:11px 13px;margin-bottom:8px;}
+.brief .bm .mn{font-weight:800;font-size:14px;color:var(--red);}
+.brief .bm .ma{font-size:11px;color:var(--red);font-weight:700;}
+.brief .bm .who{margin-top:5px;font-size:13px;font-weight:700;word-break:keep-all;}
+.brief .bm .who span{display:inline-block;background:#fff;border:1px solid #f5c6c8;border-radius:99px;padding:2px 10px;margin:2px 3px 0 0;}
+.allclear{border:1.5px solid #b9ecd8;background:#e9f9f2;color:#0b7d5c;border-radius:12px;padding:13px;text-align:center;font-weight:800;font-size:14px;}
+
+.printbtn{width:100%;border:1.5px solid var(--blue);background:#fff;color:var(--blue);font-size:14px;font-weight:800;padding:12px;border-radius:11px;cursor:pointer;font-family:inherit;margin-top:4px;}
+.privacy{margin-top:12px;font-size:11.5px;color:#b0700a;background:#fff7e8;border:1px dashed #f2d49b;border-radius:10px;padding:10px 12px;line-height:1.7;word-break:keep-all;}
+
+footer{text-align:center;font-size:11px;color:#9aa7c2;margin-top:20px;line-height:1.7;word-break:keep-all;}
+
+@media print{
+  .noprint{display:none!important;}
+  body{background:#fff;}
+  .card{box-shadow:none;break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <span class="badge">👩‍🍳 조리실 내부 게시용 · 7월 첫째 주 (중식)</span>
+    <h1>알레르기 학생<br><b>배식 주의 안내</b></h1>
+    <p class="noprint">학생 정보를 입력하면 날짜별로 주의할 메뉴와 학생이 자동 정리됩니다.</p>
+  </header>
+
+  <div class="card noprint">
+    <h2>1️⃣ 알레르기 학생 등록</h2>
+    <p class="csub">반·번호 입력 후 알레르기 번호를 누르고 추가하세요 (이름은 선택)</p>
+    <div class="frow">
+      <input id="inCls" placeholder="반 (예: 2-3)" maxlength="8">
+      <input id="inNum" placeholder="번호 (예: 14)" maxlength="6">
+    </div>
+    <div class="numpick" id="numpick"></div>
+    <button class="addbtn" onclick="addStu()">➕ 학생 추가</button>
+  </div>
+
+  <div class="card">
+    <h2>2️⃣ 등록된 학생 <span id="stuCnt" style="color:var(--blue)"></span></h2>
+    <div id="stuList"></div>
+  </div>
+
+  <div class="card">
+    <h2>3️⃣ 날짜별 배식 주의 브리핑</h2>
+    <p class="csub">배식 전 조회 시간에 함께 확인해 주세요</p>
+    <div class="daytabs noprint" id="daytabs"></div>
+    <div class="brief" id="brief"></div>
+    <button class="printbtn noprint" onclick="window.print()">🖨️ 이번 주 전체 인쇄하기</button>
+    <div class="privacy">🔒 <b>개인정보 안내</b> — 이 화면은 학생 정보를 저장하지 않습니다(새로고침 시 사라짐). 인쇄물은 조리실 내부 게시용으로만 사용하고, 외부 공유·부착을 금지합니다.</div>
+  </div>
+
+  <footer>식단 근거: 학교급식 영양표시제(2026.6.29. 발행, 7/6~7/10) · 급식"소리"함 × 젬스 활용 예시</footer>
+</div>
+
+<script>
+const ALLERGENS={1:"난류",2:"우유",3:"메밀",4:"땅콩",5:"대두",6:"밀",7:"고등어",8:"게",9:"새우",10:"돼지고기",11:"복숭아",12:"토마토",13:"아황산류",14:"호두",15:"닭고기",16:"쇠고기",17:"오징어",18:"조개류",19:"잣"};
+const WEEK=[
+ {d:"7/6",w:"월",items:[["현미찹쌀밥",[]],["설렁탕*소면",[5,6,16]],["코다리콩나물찜",[5,6,9,12,13,17,18]],["참나물도토리묵무침",[5,6,13]],["석박지",[9]],["과일주스(오렌지&파인애플)",[13]]]},
+ {d:"7/7",w:"화",items:[["발아현미밥",[]],["버섯호박된장찌개",[5,6]],["편육*상추쌈",[5,6,10,13]],["메밀비빔국수",[3,5,6,13]],["무말랭이무침",[]],["제주한라봉주스",[13]],["모듬쌈&채소스틱(자율)",[5,6,13]]]},
+ {d:"7/8",w:"수",items:[["적은찹쌀밥",[]],["꼬치어묵국",[1,5,6]],["단무지",[]],["껍질없는순대",[2,5,6,10,13,16]],["김말이튀김",[1,5,6,16]],["차돌박이누들떡볶이",[1,5,6,13,16]],["아임리얼과일주스",[13]]]},
+ {d:"7/9",w:"목",items:[["혼합잡곡밥",[5]],["제주식고사리육개장",[2,5,6,10]],["닭김치찜",[5,6,9,15]],["파프리카잡채",[5,6,10,13]],["고구마줄기볶음(자율)",[5,6]],["배추김치",[9]],["사과맛푸딩",[1,2,5,6,7,8,9,10,12,15,16,17,18]]]},
+ {d:"7/10",w:"금",items:[["흑미기장밥",[]],["짬뽕국",[5,6,9,17,18]],["싸먹는오리&겨자채샐러드",[1,2,4,5,6,13]],["깐쇼새우떡강정",[5,6,9,12,13]],["크림왕깐쇼새우",[1,2,5,6,9,13]],["배추김치",[9]],["파인애플 생과",[]]]}
+];
+
+/* 예시 학생 2명 (삭제 가능) */
+let students=[
+ {cls:"2-3",num:"14",al:[9,17],demo:true},
+ {cls:"1-1",num:"5",al:[2],demo:true}
+];
+const pickedAl=new Set();
+let curDay=0;
+
+/* 번호 선택 칩 */
+const np=document.getElementById("numpick");
+for(let n=1;n<=19;n++){
+  const b=document.createElement("button");
+  b.className="npc";
+  b.innerHTML=`<span class="nn">${n}</span><span class="nt">${ALLERGENS[n]}</span>`;
+  b.onclick=()=>{pickedAl.has(n)?pickedAl.delete(n):pickedAl.add(n);b.classList.toggle("on",pickedAl.has(n));};
+  np.appendChild(b);
+}
+
+function addStu(){
+  const cls=document.getElementById("inCls").value.trim();
+  const num=document.getElementById("inNum").value.trim();
+  if(!cls||!num){alert("반과 번호를 입력해 주세요.");return;}
+  if(pickedAl.size===0){alert("알레르기 번호를 1개 이상 선택해 주세요.");return;}
+  students.push({cls,num,al:[...pickedAl].sort((a,b)=>a-b)});
+  pickedAl.clear();
+  document.querySelectorAll(".npc").forEach(b=>b.classList.remove("on"));
+  document.getElementById("inCls").value="";document.getElementById("inNum").value="";
+  renderStu();renderBrief();
+}
+
+function renderStu(){
+  const box=document.getElementById("stuList");
+  box.innerHTML="";
+  document.getElementById("stuCnt").textContent=students.length?`${students.length}명`:"";
+  if(!students.length){box.innerHTML='<div class="empty">등록된 학생이 없습니다. 위에서 추가해 주세요.</div>';return;}
+  students.forEach((s,i)=>{
+    const d=document.createElement("div");
+    d.className="stu"+(s.demo?" demo":"");
+    d.innerHTML=`<span class="who">${s.cls}반 ${s.num}번</span><span class="al">${s.al.map(n=>n+"."+ALLERGENS[n]).join(", ")}</span><button class="del noprint" title="삭제">✕</button>`;
+    d.querySelector(".del").onclick=()=>{students.splice(i,1);renderStu();renderBrief();};
+    box.appendChild(d);
+  });
+}
+
+/* 날짜 탭 */
+const tabs=document.getElementById("daytabs");
+WEEK.forEach((day,i)=>{
+  const b=document.createElement("button");
+  b.className="dt"+(i===0?" on":"");
+  b.innerHTML=`${day.w}<small>${day.d}</small>`;
+  b.onclick=()=>{curDay=i;document.querySelectorAll(".dt").forEach((x,xi)=>x.classList.toggle("on",xi===i));renderBrief();};
+  tabs.appendChild(b);
+});
+
+function briefForDay(day){
+  const rows=[];
+  day.items.forEach(([name,nums])=>{
+    const hit=students.filter(s=>s.al.some(n=>nums.includes(n)));
+    if(hit.length)rows.push({name,nums,hit});
+  });
+  return rows;
+}
+
+function renderBrief(){
+  const box=document.getElementById("brief");
+  box.innerHTML="";
+  const mediaPrint=window.matchMedia&&window.matchMedia("print").matches;
+  const daysToShow=[WEEK[curDay]];
+  daysToShow.forEach(day=>{
+    const rows=briefForDay(day);
+    const head=document.createElement("div");
+    head.innerHTML=`<div style="font-weight:800;font-size:14px;margin:6px 0 8px;">📅 ${day.d} (${day.w})</div>`;
+    box.appendChild(head);
+    if(!students.length){box.innerHTML+='<div class="empty">학생을 등록하면 브리핑이 표시됩니다.</div>';return;}
+    if(!rows.length){box.innerHTML+='<div class="allclear">✅ 이날은 등록된 학생 모두 주의 메뉴가 없습니다.</div>';return;}
+    rows.forEach(r=>{
+      const d=document.createElement("div");
+      d.className="bm";
+      d.innerHTML=`<span class="mn">⚠️ ${r.name}</span> <span class="ma">(${r.nums.join(".")})</span>
+        <div class="who">${r.hit.map(s=>{
+          const why=s.al.filter(n=>r.nums.includes(n)).map(n=>n+"."+ALLERGENS[n]).join("·");
+          return `<span>${s.cls}반 ${s.num}번 — ${why}</span>`;
+        }).join("")}</div>`;
+      box.appendChild(d);
+    });
+  });
+}
+
+/* 인쇄 시 전체 주간 출력 */
+window.addEventListener("beforeprint",()=>{
+  const box=document.getElementById("brief");
+  box.innerHTML="";
+  WEEK.forEach(day=>{
+    const rows=briefForDay(day);
+    const head=document.createElement("div");
+    head.innerHTML=`<div style="font-weight:800;font-size:14px;margin:10px 0 8px;">📅 ${day.d} (${day.w})</div>`;
+    box.appendChild(head);
+    if(!rows.length){const c=document.createElement("div");c.className="allclear";c.textContent="✅ 주의 메뉴 없음";box.appendChild(c);return;}
+    rows.forEach(r=>{
+      const d=document.createElement("div");d.className="bm";
+      d.innerHTML=`<span class="mn">⚠️ ${r.name}</span> <span class="ma">(${r.nums.join(".")})</span>
+        <div class="who">${r.hit.map(s=>{
+          const why=s.al.filter(n=>r.nums.includes(n)).map(n=>n+"."+ALLERGENS[n]).join("·");
+          return `<span>${s.cls}반 ${s.num}번 — ${why}</span>`;
+        }).join("")}</div>`;
+      box.appendChild(d);
+    });
+  });
+});
+window.addEventListener("afterprint",renderBrief);
+
+renderStu();renderBrief();
+</script>
+</body>
+</html>

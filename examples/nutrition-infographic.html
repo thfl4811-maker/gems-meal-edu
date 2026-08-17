@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🥗 우리 학교 급식 일주일 영양 리포트 | 동탄중앙고</title>
+<style>
+:root{--blue:#2563eb;--blue-soft:#eaf1ff;--ink:#17244a;--sub:#64748b;--line:#e2e8f5;
+--ok:#0ca678;--warn:#f59e0b;--danger:#e5484d;--gold:#ffb020;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:linear-gradient(180deg,#f2f7ff,#fff 30%);color:var(--ink);display:flex;justify-content:center;line-height:1.6;}
+.app{width:100%;max-width:480px;padding:26px 18px 46px;}
+
+header{text-align:center;margin-bottom:20px;}
+header .badge{display:inline-block;background:var(--blue-soft);color:var(--blue);font-weight:800;font-size:12px;padding:4px 13px;border-radius:99px;margin-bottom:10px;}
+header h1{font-size:24px;line-height:1.35;}
+header h1 b{color:var(--blue);}
+header p{color:var(--sub);font-size:13px;margin-top:6px;}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 16px;box-shadow:0 6px 20px rgba(23,36,74,.05);margin-bottom:16px;}
+.card h2{font-size:15px;margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+.card .csub{font-size:12px;color:var(--sub);margin-bottom:14px;}
+
+/* 히어로 숫자 */
+.heronum{text-align:center;padding:6px 0 2px;}
+.heronum b{font-size:44px;color:var(--blue);letter-spacing:-0.02em;}
+.heronum span{font-size:15px;color:var(--sub);font-weight:600;}
+.heronum .vs{margin-top:4px;font-size:13px;font-weight:700;color:var(--ok);}
+
+/* 요일별 에너지 바 */
+.daychart{display:flex;flex-direction:column;gap:10px;}
+.dayrow{display:grid;grid-template-columns:34px 1fr 64px;gap:8px;align-items:center;}
+.dayrow .d{font-weight:800;font-size:13px;text-align:center;background:var(--blue-soft);color:var(--blue);border-radius:8px;padding:5px 0;}
+.dayrow.hot .d{background:#fdeeee;color:var(--danger);}
+.dayrow.light .d{background:#fff4dd;color:#b0700a;}
+.trackwrap{position:relative;}
+.track{height:22px;background:#eef2fb;border-radius:8px;overflow:hidden;position:relative;}
+.track i{display:block;height:100%;background:var(--blue);border-radius:8px;width:0;transition:width 1s ease;}
+.dayrow.hot .track i{background:var(--danger);}
+.dayrow.light .track i{background:var(--gold);}
+.band{position:absolute;top:-4px;bottom:-4px;border-left:2px dashed #94a8d8;border-right:2px dashed #94a8d8;pointer-events:none;}
+.dayrow .kc{font-size:13px;font-weight:800;text-align:right;}
+.dayrow .menu{grid-column:2/4;font-size:11px;color:var(--sub);margin-top:-4px;padding-left:2px;}
+.bandnote{font-size:11px;color:var(--sub);margin-top:10px;}
+
+/* 탄단지 */
+.macrobar{display:flex;height:34px;border-radius:10px;overflow:hidden;font-size:12px;font-weight:800;color:#fff;text-align:center;}
+.macrobar .m1{background:#3b82f6;display:flex;align-items:center;justify-content:center;}
+.macrobar .m2{background:#0ca678;display:flex;align-items:center;justify-content:center;}
+.macrobar .m3{background:#f59e0b;display:flex;align-items:center;justify-content:center;}
+.macrolegend{display:flex;justify-content:space-between;font-size:11.5px;color:var(--sub);margin-top:8px;}
+.macrolegend b{color:var(--ink);}
+.macrook{margin-top:10px;font-size:12.5px;background:#e9f9f2;border:1px solid #b9ecd8;color:#0b7d5c;border-radius:9px;padding:8px 11px;font-weight:700;}
+
+/* 충족률 그리드 */
+.nutgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.nut{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbfcff;}
+.nut .nm{font-size:12px;font-weight:700;color:var(--sub);}
+.nut .pc{font-size:20px;font-weight:800;}
+.nut .pc.hi{color:var(--ok);}
+.nut .pc.mid{color:var(--warn);}
+.nut .pc.lo{color:var(--danger);}
+.nut .det{font-size:10.5px;color:var(--sub);}
+.nut .minibar{height:6px;background:#eef2fb;border-radius:99px;margin-top:6px;overflow:hidden;}
+.nut .minibar i{display:block;height:100%;border-radius:99px;width:0;transition:width 1s ease .3s;}
+
+/* 간식 추천 */
+.reco{display:flex;gap:11px;align-items:flex-start;margin-top:12px;background:linear-gradient(120deg,#fff7e8,#eaf1ff);border:1px solid #f0e2c4;border-radius:12px;padding:13px 14px;}
+.reco .rico{font-size:26px;flex:none;}
+.reco .rtx{font-size:13px;color:var(--sub);line-height:1.6;word-break:keep-all;}
+.reco .rtx b{color:var(--ink);}
+.reco .rtx > b{display:block;font-size:14px;margin-bottom:2px;}
+
+/* MVP 카드 */
+.mvps{display:flex;flex-direction:column;gap:9px;}
+.mvp{display:flex;gap:11px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:#fbfcff;}
+.mvp .ico{font-size:26px;flex:none;}
+.mvp .tx{flex:1;font-size:13px;color:var(--sub);}
+.mvp .tx b{display:block;color:var(--ink);font-size:14px;}
+.mvp .num{font-size:15px;font-weight:800;color:var(--blue);white-space:nowrap;}
+
+footer{text-align:center;font-size:11px;color:#9aa7c2;line-height:1.7;margin-top:22px;word-break:keep-all;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <span class="badge">🏫 동탄중앙고등학교 · 7월 6일~10일 (중식)</span>
+    <h1>우리 학교 급식<br><b>일주일 영양 리포트</b> 🥗</h1>
+    <p>학교급식 영양표시제 자료 한 장으로 만든 인포그래픽</p>
+  </header>
+
+  <!-- 주간 평균 에너지 -->
+  <div class="card">
+    <div class="heronum">
+      <b>951</b><span> kcal</span>
+      <div class="vs">주간 평균 에너지 — 급식 기준량 900kcal의 106% ✅</div>
+    </div>
+  </div>
+
+  <!-- 요일별 에너지 -->
+  <div class="card">
+    <h2>📊 요일별 에너지</h2>
+    <p class="csub">점선 구간이 적정 범위(기준량 ±10%, 810~990kcal)예요.</p>
+    <div class="daychart" id="chart">
+      <div class="dayrow" data-kc="934">
+        <span class="d">월</span>
+        <div class="trackwrap"><div class="track"><i></i></div><div class="band"></div></div>
+        <span class="kc">934</span>
+        <span class="menu">설렁탕*소면 · 코다리콩나물찜</span>
+      </div>
+      <div class="dayrow" data-kc="1045">
+        <span class="d">화</span>
+        <div class="trackwrap"><div class="track"><i></i></div><div class="band"></div></div>
+        <span class="kc">1,045</span>
+        <span class="menu">편육*상추쌈 · 메밀비빔국수</span>
+      </div>
+      <div class="dayrow" data-kc="947">
+        <span class="d">수</span>
+        <div class="trackwrap"><div class="track"><i></i></div><div class="band"></div></div>
+        <span class="kc">947</span>
+        <span class="menu">꼬치어묵국 · 순대 · 차돌박이누들떡볶이</span>
+      </div>
+      <div class="dayrow light" data-kc="694">
+        <span class="d">목</span>
+        <div class="trackwrap"><div class="track"><i></i></div><div class="band"></div></div>
+        <span class="kc">694</span>
+        <span class="menu">제주식고사리육개장 · 닭김치찜</span>
+      </div>
+      <div class="dayrow hot" data-kc="1135">
+        <span class="d">금</span>
+        <div class="trackwrap"><div class="track"><i></i></div><div class="band"></div></div>
+        <span class="kc">1,135</span>
+        <span class="menu">짬뽕국 · 깐쇼새우떡강정 · 크림왕깐쇼새우</span>
+      </div>
+    </div>
+    <p class="bandnote">🔥 금요일이 가장 든든(1,135kcal), 🪶 목요일이 가장 가벼웠어요(694kcal).</p>
+  </div>
+
+  <!-- 탄단지 비율 -->
+  <div class="card">
+    <h2>🍚 에너지 구성 비율 (탄 : 단 : 지)</h2>
+    <p class="csub">일주일 평균, 전체 에너지에서 각 영양소가 차지한 비율</p>
+    <div class="macrobar">
+      <div class="m1" style="width:61.7%">61.7%</div>
+      <div class="m2" style="width:20.3%">20.3%</div>
+      <div class="m3" style="width:18.0%">18%</div>
+    </div>
+    <div class="macrolegend">
+      <span>🟦 <b>탄수화물</b> (적정 50~65)</span>
+      <span>🟩 <b>단백질</b> (10~20)</span>
+      <span>🟨 <b>지방</b> (15~30)</span>
+    </div>
+    <div class="macrook">✅ 세 영양소 모두 적정 비율 범위 안! 균형 잡힌 한 주였어요.</div>
+  </div>
+
+  <!-- 영양소 충족률 -->
+  <div class="card">
+    <h2>💯 영양소 충족률</h2>
+    <p class="csub">주간 평균 ÷ 급식 기준량(권장섭취량) × 100</p>
+    <div class="nutgrid">
+      <div class="nut"><span class="nm">단백질</span><div class="pc hi">219%</div><span class="det">47.4g / 21.7g</span><div class="minibar"><i data-w="100" style="background:#0ca678"></i></div></div>
+      <div class="nut"><span class="nm">철분</span><div class="pc hi">174%</div><span class="det">8.2mg / 4.7mg</span><div class="minibar"><i data-w="100" style="background:#0ca678"></i></div></div>
+      <div class="nut"><span class="nm">티아민</span><div class="pc hi">134%</div><span class="det">0.63mg / 0.47mg</span><div class="minibar"><i data-w="100" style="background:#0ca678"></i></div></div>
+      <div class="nut"><span class="nm">리보플라빈</span><div class="pc mid">98%</div><span class="det">0.56mg / 0.57mg</span><div class="minibar"><i data-w="98" style="background:#f59e0b"></i></div></div>
+      <div class="nut"><span class="nm">비타민C</span><div class="pc mid">94%</div><span class="det">31.6mg / 33.4mg</span><div class="minibar"><i data-w="94" style="background:#f59e0b"></i></div></div>
+      <div class="nut"><span class="nm">칼슘</span><div class="pc mid">81%</div><span class="det">244mg / 300mg</span><div class="minibar"><i data-w="81" style="background:#f59e0b"></i></div></div>
+      <div class="nut"><span class="nm">비타민A</span><div class="pc lo">60%</div><span class="det">171 / 284㎍ RAE</span><div class="minibar"><i data-w="60" style="background:#e5484d"></i></div></div>
+      <div class="nut"><span class="nm">에너지</span><div class="pc hi">106%</div><span class="det">951 / 900kcal</span><div class="minibar"><i data-w="100" style="background:#0ca678"></i></div></div>
+    </div>
+    <div class="reco">
+      <span class="rico">🥕</span>
+      <div class="rtx">
+        <b>영양선생님의 간식 추천</b>
+        이번 주는 <b>비타민A</b>가 조금 아쉬웠어요. 오늘 간식으로 비타민A가 가득한 <b>당근 스틱, 방울토마토, 삶은 달걀, 치즈</b> 어때요? 눈 건강과 피부에 좋아요! 👀✨
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🏆 이번 주 영양 MVP</h2>
+    <p class="csub">숫자로 뽑은 요일별 하이라이트</p>
+    <div class="mvps">
+      <div class="mvp"><span class="ico">💪</span><span class="tx"><b>단백질왕 — 월요일</b>설렁탕*소면과 코다리콩나물찜의 합작</span><span class="num">75.1g</span></div>
+      <div class="mvp"><span class="ico">🩸</span><span class="tx"><b>철분왕 — 수요일</b>순대의 힘! 기준량의 3.4배</span><span class="num">16.2mg</span></div>
+      <div class="mvp"><span class="ico">🍊</span><span class="tx"><b>비타민C왕 — 월요일</b>과일주스(오렌지&파인애플)가 견인</span><span class="num">57.1mg</span></div>
+      <div class="mvp"><span class="ico">⚡</span><span class="tx"><b>티아민왕 — 화요일</b>편육(돼지고기)의 클래스</span><span class="num">1.47mg</span></div>
+    </div>
+  </div>
+
+  <footer>
+    자료: 동탄중앙고등학교 학교급식 영양표시제 (2026.6.29. 발행, 7/6~7/10 주간) — 표에 없는 수치는 만들지 않았습니다.<br>
+    급식 기준량은 표의 권장섭취량 기준(한 끼) · 급식"소리"함 × 젬스 활용 예시
+  </footer>
+</div>
+
+<script>
+/* 에너지 바: 0~1200kcal 스케일, 적정밴드 810~990 표시 */
+const MAX=1200,LO=810,HI=990;
+document.querySelectorAll(".dayrow").forEach(r=>{
+  const kc=+r.dataset.kc;
+  const bar=r.querySelector(".track i");
+  requestAnimationFrame(()=>{bar.style.width=(kc/MAX*100)+"%";});
+  const band=r.querySelector(".band");
+  band.style.left=(LO/MAX*100)+"%";
+  band.style.width=((HI-LO)/MAX*100)+"%";
+});
+/* 충족률 미니바 */
+requestAnimationFrame(()=>{
+  document.querySelectorAll(".minibar i").forEach(i=>{i.style.width=i.dataset.w+"%";});
+});
+</script>
+</body>
+</html>

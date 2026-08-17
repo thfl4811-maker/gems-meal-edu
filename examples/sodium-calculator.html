@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧂 오늘 내가 먹은 나트륨 계산기 | 동탄중앙고</title>
+<style>
+:root{--blue:#2563eb;--blue-soft:#eaf1ff;--ink:#17244a;--sub:#64748b;--line:#e2e8f5;
+--ok:#0ca678;--warn:#f59e0b;--danger:#e5484d;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:linear-gradient(180deg,#f2f7ff,#fff 40%);color:var(--ink);min-height:100vh;display:flex;justify-content:center;line-height:1.6;}
+.app{width:100%;max-width:440px;padding:22px 16px 44px;}
+
+h1{font-size:23px;text-align:center;line-height:1.35;}
+h1 b{color:var(--blue);}
+.school{display:block;text-align:center;margin:8px auto 4px;}
+.school span{display:inline-block;background:var(--blue-soft);color:var(--blue);font-weight:800;font-size:12.5px;padding:4px 13px;border-radius:99px;}
+.intro{text-align:center;color:var(--sub);font-size:13.5px;margin-bottom:18px;word-break:keep-all;}
+
+/* 학교급 선택 */
+.agegroup{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.agebtn{border:1.5px solid var(--line);background:#fff;color:var(--sub);font-size:12px;font-weight:700;padding:9px 2px;border-radius:11px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .12s;}
+.agebtn.on{border-color:var(--blue);background:var(--blue);color:#fff;box-shadow:0 4px 10px rgba(37,99,235,.25);}
+.gnum em{font-style:normal;}
+
+/* 게이지 */
+.gaugebox{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 16px;box-shadow:0 6px 20px rgba(23,36,74,.06);position:sticky;top:10px;z-index:10;}
+.gnum{display:flex;align-items:baseline;justify-content:center;gap:6px;}
+.gnum b{font-size:36px;color:var(--blue);transition:color .3s;}
+.gnum span{font-size:14px;color:var(--sub);font-weight:600;}
+.gbar{height:16px;background:#eef2fb;border-radius:99px;overflow:hidden;margin:10px 0 8px;position:relative;}
+.gbar i{display:block;height:100%;width:0%;background:var(--ok);border-radius:99px;transition:width .4s,background .4s;}
+.gbar .mark{position:absolute;top:-3px;bottom:-3px;left:100%;width:2px;background:var(--ink);opacity:.35;}
+.gmsg{text-align:center;font-size:13.5px;font-weight:700;min-height:21px;}
+.gsub{text-align:center;font-size:11.5px;color:var(--sub);margin-top:2px;}
+
+/* 섹션 */
+h2{font-size:16px;margin:26px 0 4px;display:flex;align-items:center;gap:7px;}
+.h2sub{font-size:12.5px;color:var(--sub);margin-bottom:10px;}
+.items{display:flex;flex-direction:column;gap:8px;}
+.item{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;cursor:pointer;transition:border-color .12s,background .12s;user-select:none;}
+.item.onsel{border-color:var(--blue);background:var(--blue-soft);}
+.item .chk{flex:none;width:22px;height:22px;border-radius:7px;border:1.5px solid #c3cfe8;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;background:#fff;transition:all .12s;}
+.item.onsel .chk{background:var(--blue);border-color:var(--blue);}
+.item .nm{flex:1;font-size:14.5px;font-weight:700;}
+.item .nm small{display:block;font-weight:500;color:var(--sub);font-size:11.5px;}
+.item .na{font-size:13px;font-weight:800;color:var(--sub);}
+.item.onsel .na{color:var(--blue);}
+
+.snacknote{font-size:12px;color:var(--sub);background:#fff7e8;border:1px dashed #f2d49b;border-radius:10px;padding:9px 12px;margin-top:10px;word-break:keep-all;}
+
+.resetbtn{display:block;width:100%;margin-top:22px;border:1.5px solid var(--line);background:#fff;color:var(--sub);font-size:14px;font-weight:700;padding:12px;border-radius:12px;cursor:pointer;font-family:inherit;}
+
+/* 사진 입력 */
+.photobtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--blue);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:12px;cursor:pointer;box-shadow:0 5px 14px rgba(37,99,235,.25);}
+.photobtn:active{transform:scale(.98);}
+.pcard{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;display:flex;gap:12px;align-items:flex-start;}
+.pcard img{width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--line);flex:none;}
+.pcard .pform{flex:1;min-width:0;}
+.pcard .pform label{font-size:12px;font-weight:700;color:var(--sub);display:block;margin-bottom:4px;}
+.pcard input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:8px 10px;font-size:14px;font-family:inherit;margin-bottom:6px;}
+.pcard .narow{display:flex;gap:6px;align-items:center;}
+.pcard input[type=number]{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:9px;padding:8px 10px;font-size:15px;font-weight:800;font-family:inherit;color:var(--blue);}
+.pcard input:focus{outline:none;border-color:var(--blue);}
+.pcard .mg{font-size:13px;font-weight:700;color:var(--sub);}
+.pcard .addbtn{width:100%;margin-top:7px;border:none;background:var(--ink);color:#fff;font-size:13.5px;font-weight:800;padding:10px;border-radius:9px;cursor:pointer;font-family:inherit;}
+.pcard.added{border-color:var(--ok);background:#f2fbf7;}
+.pcard .delbtn{border:none;background:none;color:#c3cfe8;font-size:16px;cursor:pointer;flex:none;padding:2px;}
+.pdone{font-size:13px;font-weight:800;color:var(--ok);margin-top:6px;}
+footer{margin-top:26px;text-align:center;font-size:11px;color:#9aa7c2;line-height:1.7;word-break:keep-all;}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>🧂 오늘 내가 먹은<br><b>나트륨 계산기</b></h1>
+  <div class="school"><span>🏫 동탄중앙고등학교 · 3월 12일 (목)</span></div>
+  <p class="intro">먼저 내 나이를 고르고, 오늘 급식에서 먹은 것을 눌러 보세요.<br>내 나이 기준 하루 나트륨 목표의 몇 %를 먹었는지 바로 보여요.</p>
+
+  <div class="agegroup" role="group" aria-label="나이 선택">
+    <button class="agebtn" data-goal="1500" data-portion="0.45">🧒 유치원</button>
+    <button class="agebtn" data-goal="1700" data-portion="0.6">✏️ 초 1~3</button>
+    <button class="agebtn" data-goal="2000" data-portion="0.7">📚 초 4~6</button>
+    <button class="agebtn on" data-goal="2300" data-portion="1">🎓 중·고등</button>
+  </div>
+
+  <div class="gaugebox">
+    <div class="gnum"><b id="total">0</b><span>mg / <em id="goalTxt">2,300</em>mg</span></div>
+    <div class="gbar"><i id="bar"></i></div>
+    <div class="gmsg" id="msg">먹은 메뉴를 골라 보세요 👇</div>
+    <div class="gsub" id="pct">하루 목표의 0%</div>
+  </div>
+
+  <h2>🍽️ 오늘의 급식 <small style="font-weight:500;color:var(--sub);font-size:12px;">(중식)</small></h2>
+  <p class="h2sub">먹은 만큼 눌러 주세요. 남긴 반찬은 안 눌러도 돼요!<br><span style="color:#94a3c0">※ 나이를 바꾸면 배식량에 맞춰 나트륨도 함께 조정돼요 (추정 비율: 유치원 45% · 초1~3 60% · 초4~6 70%)</span></p>
+  <div class="items" id="mealItems"></div>
+
+  <h2>🍜 급식 말고 이런 것도 먹었다면?</h2>
+  <p class="h2sub">간식·야식의 나트륨, 생각보다 큽니다.</p>
+  <div class="items" id="snackItems"></div>
+  <div class="snacknote">💡 라면 한 그릇의 나트륨은 오늘 급식 한 끼 전체와 비슷하거나 더 많아요. 국물을 남기면 나트륨을 크게 줄일 수 있어요!</div>
+
+  <h2>📷 직접 찍고 입력하기</h2>
+  <p class="h2sub">과자·음료 뒷면의 영양정보표를 찍고, <b>나트륨 ○○mg</b>을 직접 찾아 입력해 보세요!</p>
+
+  <div class="photobox">
+    <label class="photobtn" for="photoInput">📸 영양정보표 찍기</label>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+    <div id="photoList"></div>
+  </div>
+
+  <button class="resetbtn" onclick="resetAll()">🔄 처음부터 다시</button>
+
+  <footer>메뉴별 나트륨은 학교급식 표준 레시피 기준 <b>추정치</b>이며, 나이 선택 시 학교급별 한 끼 기준량 비율로 배식량을 보정합니다. 실제와 다를 수 있습니다.<br>기준: 2025 한국인 영양소 섭취기준(KDRIs) 나트륨 만성질환위험감소섭취량 — 12세 이상 2,300mg/일 (3~5세 1,500 · 6~8세 1,700 · 9~11세 2,000).<br>급식"소리"함 × 젬스 활용 예시</footer>
+</div>
+
+<script>
+/* 나트륨(mg)은 1인 배식량 기준 추정치 */
+const MEAL=[
+ {n:"현미밥",d:"1공기",na:5},
+ {n:"미역국",d:"국물 포함 1그릇",na:620},
+ {n:"제육볶음",d:"1인 배식량",na:540},
+ {n:"도토리묵무침",d:"1인 배식량",na:230},
+ {n:"배추김치",d:"3~4조각",na:290},
+ {n:"사과",d:"1쪽",na:0},
+];
+const SNACK=[
+ {n:"컵라면 (국물까지)",d:"1개",na:1750},
+ {n:"컵라면 (국물 남김)",d:"1개",na:900},
+ {n:"편의점 삼각김밥",d:"1개",na:350},
+ {n:"치킨",d:"2~3조각",na:700},
+ {n:"떡볶이",d:"1인분",na:950},
+ {n:"감자칩 과자",d:"1봉",na:280},
+];
+let GOAL=2300, PORTION=1;
+const sel=new Set();
+
+/* 학교급 선택 → 목표 변경 (2025 KDRIs 만성질환위험감소섭취량) */
+document.querySelectorAll(".agebtn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".agebtn").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    GOAL=+b.dataset.goal;
+    PORTION=+b.dataset.portion;
+    document.getElementById("goalTxt").textContent=GOAL.toLocaleString();
+    applyPortion();
+    update();
+  });
+});
+
+function render(list,boxId,prefix){
+  const box=document.getElementById(boxId);
+  list.forEach((it,i)=>{
+    const key=prefix+i;
+    const d=document.createElement("div");
+    d.className="item";
+    d.innerHTML=`<span class="chk">✓</span><span class="nm">${it.n}<small>${it.d}</small></span><span class="na">${it.na.toLocaleString()}mg</span>`;
+    d.onclick=()=>{
+      if(sel.has(key)){sel.delete(key);d.classList.remove("onsel");}
+      else{sel.add(key);d.classList.add("onsel");}
+      update();
+    };
+    d.dataset.base=it.na;
+    d.dataset.meal=(prefix==="m")?"1":"0";
+    d.dataset.na=it.na;
+    box.appendChild(d);
+  });
+}
+
+function update(){
+  let sum=0;
+  document.querySelectorAll(".item.onsel").forEach(d=>sum+=+d.dataset.na);
+  sum+=photoSum;
+  const pct=Math.round(sum/GOAL*100);
+  const bar=document.getElementById("bar");
+  const tot=document.getElementById("total");
+  tot.textContent=sum.toLocaleString();
+  bar.style.width=Math.min(pct,100)+"%";
+  document.getElementById("pct").textContent=`하루 목표의 ${pct}%`;
+  const msg=document.getElementById("msg");
+  let color,text;
+  if(sum===0){color="var(--ok)";text="먹은 메뉴를 골라 보세요 👇";}
+  else if(pct<50){color="var(--ok)";text="😊 아직 여유 있어요";}
+  else if(pct<80){color="var(--warn)";text="🙂 절반을 넘었어요 — 저녁은 싱겁게!";}
+  else if(pct<=100){color="var(--warn)";text="😮 하루 목표에 거의 도달!";}
+  else{color="var(--danger)";text="🚨 하루 권고량을 넘었어요! 물을 충분히 마시고, 내일은 국물을 줄여 보세요";}
+  bar.style.background=color;
+  tot.style.color=color;
+  msg.textContent=text;
+  msg.style.color=color;
+}
+
+function resetAll(){
+  sel.clear();
+  document.querySelectorAll(".item").forEach(d=>d.classList.remove("onsel"));
+  photoSum=0;
+  document.getElementById("photoList").innerHTML="";
+  update();
+}
+
+/* ── 📷 사진 찍고 직접 입력 ── */
+let photoSum=0;
+document.getElementById("photoInput").addEventListener("change",e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  const url=URL.createObjectURL(file);
+  const card=document.createElement("div");
+  card.className="pcard";
+  card.innerHTML=`
+    <img src="${url}" alt="영양정보표 사진">
+    <div class="pform">
+      <label>먹은 것 이름</label>
+      <input type="text" placeholder="예: ○○과자" maxlength="20">
+      <label>사진 속 나트륨을 찾아 적어요 👀</label>
+      <div class="narow"><input type="number" min="0" max="9999" placeholder="0" inputmode="numeric"><span class="mg">mg</span></div>
+      <button class="addbtn">게이지에 더하기 ➕</button>
+    </div>
+    <button class="delbtn" title="삭제">✕</button>`;
+  document.getElementById("photoList").prepend(card);
+  e.target.value="";
+
+  const numIn=card.querySelector("input[type=number]");
+  const nameIn=card.querySelector("input[type=text]");
+  const addBtn=card.querySelector(".addbtn");
+  let added=0;
+
+  addBtn.onclick=()=>{
+    const v=Math.max(0,Math.min(9999,parseInt(numIn.value)||0));
+    if(v===0){numIn.focus();return;}
+    photoSum+=v-added;added=v;
+    card.classList.add("added");
+    numIn.disabled=true;nameIn.disabled=true;
+    addBtn.outerHTML=`<div class="pdone">✅ ${nameIn.value||"내 간식"} ${v.toLocaleString()}mg 더했어요!</div>`;
+    update();
+  };
+  card.querySelector(".delbtn").onclick=()=>{
+    photoSum-=added;
+    URL.revokeObjectURL(url);
+    card.remove();
+    update();
+  };
+});
+
+function applyPortion(){
+  document.querySelectorAll(".item").forEach(d=>{
+    const base=+d.dataset.base;
+    const na=(d.dataset.meal==="1")?Math.round(base*PORTION/5)*5:base;
+    d.dataset.na=na;
+    const label=(d.dataset.meal==="1"?"약 ":"")+na.toLocaleString()+"mg";
+    d.querySelector(".na").textContent=label;
+  });
+}
+
+render(MEAL,"mealItems","m");
+render(SNACK,"snackItems","s");
+applyPortion();
+update();
+</script>
+</body>
+</html>

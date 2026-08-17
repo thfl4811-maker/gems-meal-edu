@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⏳ 한 끼 급식이 만들어지기까지 | 동탄중앙고</title>
+<style>
+:root{--blue:#2563eb;--blue-soft:#eaf1ff;--ink:#17244a;--sub:#64748b;--line:#dbe6f7;--gold:#ffb020;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:linear-gradient(180deg,#f2f7ff,#fff 30%);color:var(--ink);display:flex;justify-content:center;min-height:100vh;line-height:1.6;}
+.app{width:100%;max-width:440px;padding:26px 18px 50px;}
+
+header{text-align:center;margin-bottom:26px;}
+header .badge{display:inline-block;background:var(--blue-soft);color:var(--blue);font-weight:800;font-size:12px;padding:4px 13px;border-radius:99px;margin-bottom:10px;}
+header h1{font-size:24px;line-height:1.4;}
+header h1 b{color:var(--blue);}
+header p{font-size:13px;color:var(--sub);margin-top:8px;word-break:keep-all;}
+
+/* 타임라인 */
+.tl{position:relative;padding-left:56px;}
+.tl::before{content:"";position:absolute;left:23px;top:8px;bottom:8px;width:3px;background:linear-gradient(180deg,var(--blue),#a8c4ff);border-radius:99px;}
+.step{position:relative;margin-bottom:22px;opacity:0;transform:translateY(18px);transition:all .55s ease;}
+.step.vis{opacity:1;transform:none;}
+.step .dot{position:absolute;left:-45px;top:2px;width:38px;height:38px;border-radius:50%;background:#fff;border:3px solid var(--blue);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 10px rgba(37,99,235,.18);}
+.step .time{display:inline-block;background:var(--ink);color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:99px;letter-spacing:.05em;margin-bottom:7px;}
+.step .card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px 15px;box-shadow:0 6px 18px rgba(23,36,74,.05);}
+.step h2{font-size:16.5px;margin-bottom:5px;}
+.step p{font-size:13.5px;color:var(--sub);word-break:keep-all;}
+.step p b{color:var(--ink);}
+.step .fact{margin-top:10px;background:#fff7e8;border:1px dashed #f2d49b;border-radius:10px;padding:9px 11px;font-size:12.5px;color:#7a5a12;word-break:keep-all;}
+.step .fact b{color:#b0700a;}
+
+/* 마무리 */
+.fin{text-align:center;margin-top:8px;opacity:0;transform:translateY(18px);transition:all .55s ease;}
+.fin.vis{opacity:1;transform:none;}
+.fin .big{font-size:52px;}
+.fin h2{font-size:20px;margin:6px 0 4px;}
+.fin p{font-size:13.5px;color:var(--sub);word-break:keep-all;}
+
+footer{text-align:center;font-size:11px;color:#9aa7c2;margin-top:26px;line-height:1.7;word-break:keep-all;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <span class="badge">🏫 동탄중앙고 급식실의 하루</span>
+    <h1>한 끼 급식이<br><b>만들어지기까지</b> ⏳</h1>
+    <p>여러분이 12시 50분에 만나는 그 식판,<br>사실 새벽부터 시작된 릴레이입니다. 스크롤해 보세요!</p>
+  </header>
+
+  <div class="tl">
+
+    <div class="step">
+      <span class="dot">🚚</span>
+      <span class="time">07:30</span>
+      <div class="card">
+        <h2>식재료 검수</h2>
+        <p>새벽에 도착한 식재료를 하나하나 확인해요. <b>온도, 신선도, 원산지, 유통기한</b>까지 — 기준에 안 맞으면 그 자리에서 반품!</p>
+        <div class="fact">🌡️ 냉장식품은 <b>10℃ 이하</b>, 냉동식품은 언 상태 그대로 도착해야 통과!</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot">🧼</span>
+      <span class="time">검수 후 바로</span>
+      <div class="card">
+        <h2>전처리 — 씻고, 다듬고, 소독하고</h2>
+        <p>채소는 여러 번 세척·소독하고, 재료를 다듬어요. 생고기와 채소가 만나지 않게 <b>교차오염 방지</b>가 철칙!</p>
+        <div class="fact">🔪 칼과 도마는 <b>용도별로 색을 구분</b>해서 써요 — 고기용, 채소용, 완제품용이 다 달라요.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot">🍲</span>
+      <span class="time">오전</span>
+      <div class="card">
+        <h2>1차 조리 — 큰 솥부터</h2>
+        <p>국·탕·찜처럼 <b>오래 끓여야 하는 음식</b>부터 먼저 조리해요. 수백 인분 사이에서도 온도계는 쉬지 않아요.</p>
+        <div class="fact">🌡️ 가열조리는 음식 <b>중심온도 75℃(패류는 85℃!)에서 1분 이상</b>을 확인해야 통과예요.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot">🍳</span>
+      <span class="time">11:20</span>
+      <div class="card">
+        <h2>2차 조리 — 배식 직전 완성</h2>
+        <p>볶음·튀김·무침처럼 <b>갓 만들어야 맛있는 음식</b>은 배식 시간에 맞춰 2차로 조리해요. 급식이 늘 따뜻한 비밀!</p>
+        <div class="fact">🍳 튀김이 눅눅하지 않은 이유 — 여러분이 오기 <b>한 시간 반 전에</b> 만들기 시작하거든요.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot">🥄</span>
+      <span class="time">배식 직전</span>
+      <div class="card">
+        <h2>검식 & 보존식</h2>
+        <p>배식 전에 영양선생님이 <b>맛·익힘·이물</b>을 직접 확인(검식)하고, 오늘 음식을 한 벌 따로 담아 보관해요(보존식).</p>
+        <div class="fact">🧊 보존식은 <b>영하 18℃ 이하에서 144시간(6일) 이상</b> 보관 — 혹시 모를 상황의 증거품이에요.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot">🍽️</span>
+      <span class="time">12:50 배식!</span>
+      <div class="card">
+        <h2>드디어 배식</h2>
+        <p>여러분이 급식실에 들어오는 순간! 알레르기 학생 주의 메뉴도 이때 다시 한번 확인해요.</p>
+        <div class="fact">⏱️ 조리 완료 후 따뜻하게 보관하지 못하는 음식은 <b>2시간 이내 배식 완료</b>가 원칙 — 그래서 급식은 늘 갓 만든 맛!</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot">🧽</span>
+      <span class="time">배식 후</span>
+      <div class="card">
+        <h2>세척·소독 대작전</h2>
+        <p>수백 개의 식판과 수저, 커다란 솥까지 씻고 소독해요. 잔반도 계량해서 처리하고요.</p>
+        <div class="fact">💡 여러분이 <b>잔반을 줄이면</b> 처리 비용이 줄어 그만큼 더 좋은 식재료를 살 수 있어요!</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="dot">📋</span>
+      <span class="time">오후</span>
+      <div class="card">
+        <h2>내일을 준비하는 시간</h2>
+        <p>위생 점검 기록을 정리하고, 내일 식재료 발주를 확인해요. 급식실의 하루는 이렇게 다음 한 끼로 이어집니다.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="fin">
+    <span class="big">🙏</span>
+    <h2>오늘의 한 끼, 수많은 손을 거쳐 왔어요</h2>
+    <p>조리사·조리실무사 선생님들과 영양선생님의 하루에<br>"잘 먹었습니다" 한마디, 어떨까요?</p>
+  </div>
+
+  <footer>검수·2차 조리·배식 시간은 동탄중앙고 기준, 그 외 단계는 대략적인 흐름입니다 · 위생 기준: 학교급식 위생관리 기준(중심온도 75℃ 1분, 보존식 -18℃ 144시간 등)<br>급식"소리"함 × 젬스 활용 예시</footer>
+</div>
+
+<script>
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("vis");io.unobserve(e.target);}});
+},{threshold:.25});
+document.querySelectorAll(".step,.fin").forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
