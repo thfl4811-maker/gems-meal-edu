@@ -141,19 +141,20 @@ footer a{color:var(--cobalt);text-decoration:none;font-weight:700;}
 </head>
 <body>
 
-<!-- 급식소리함 게이트: 로그인 + 2차 강의 코드(tier 2) -->
+<!-- 급식소리함 게이트: 로그인 + 2차 강의(tier 2) 또는 그룹 코드(policy: 정책실행연구회) -->
 <script>window.SORI_GATE_SKIP=false;</script>
 <script src="https://geupsik-soriham.vercel.app/sori-gate.js"></script>
 <script>
 window.addEventListener('sori-ready', function(){
   var p = (window.SORI && (window.SORI.profile || window.SORI.user)) || {};
   var tier = p.tier || 0;
-  if (tier < 2) {
+  var groups = p.groups || [];
+  if (tier < 2 && groups.indexOf('policy') === -1) {
     document.body.innerHTML =
       '<div style="max-width:520px;margin:14vh auto;padding:34px 28px;font-family:Pretendard,-apple-system,sans-serif;text-align:center;background:#fff;border:1px solid #dbe4f5;border-radius:18px;box-shadow:0 10px 30px rgba(18,36,72,.07)">'
       + '<div style="font-size:44px;margin-bottom:10px">&#128273;</div>'
-      + '<h1 style="font-size:21px;color:#122448;margin-bottom:10px">2차 강의 자료입니다</h1>'
-      + '<p style="font-size:14px;color:#5a6b8c;line-height:1.75;word-break:keep-all">이 페이지는 <b>2차 직무연수에 참여하신 선생님</b>만 열람하실 수 있어요.<br>급식소리함에서 <b>2차 강의 코드</b>를 입력하시면 바로 열립니다.</p>'
+      + '<h1 style="font-size:21px;color:#122448;margin-bottom:10px">강의 코드가 필요한 자료예요</h1>'
+      + '<p style="font-size:14px;color:#5a6b8c;line-height:1.75;word-break:keep-all">이 페이지는 <b>안내받은 강의 코드를 입력하신 선생님</b>만 열람하실 수 있어요.<br>급식소리함 상단 <b>🔑 코드 입력</b>에 안내받은 코드를 넣으시면 바로 열립니다.</p>'
       + '<a href="https://geupsik-soriham.vercel.app" style="display:inline-block;margin-top:18px;background:#1d4ed8;color:#fff;font-weight:700;font-size:14px;padding:12px 22px;border-radius:11px;text-decoration:none">급식소리함으로 이동</a>'
       + '</div>';
   }
