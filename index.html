@@ -146,21 +146,84 @@ footer a{color:var(--cobalt);text-decoration:none;font-weight:700;}
 <script src="https://geupsik-soriham.vercel.app/sori-gate.js"></script>
 <script>
 window.addEventListener('sori-ready', function(){
-  var S = window.SORI || {};
-  var p = S.profile || S.user || {};
-  var email = (S.user && S.user.email) || p.email || '';
-  var groups = p.groups || [];
+  var ADMIN = 'thfl4811@gmail.com';
   var ALLOW = ['policy', 'insung'];
-  var ok = email === 'thfl4811@gmail.com' || ALLOW.some(function (g) { return groups.indexOf(g) > -1; });
-  if (!ok) {
-    document.body.innerHTML =
-      '<div style="max-width:520px;margin:14vh auto;padding:34px 28px;font-family:Pretendard,-apple-system,sans-serif;text-align:center;background:#fff;border:1px solid #dbe4f5;border-radius:18px;box-shadow:0 10px 30px rgba(18,36,72,.07)">'
-      + '<div style="font-size:44px;margin-bottom:10px">&#128273;</div>'
-      + '<h1 style="font-size:21px;color:#122448;margin-bottom:10px">연구회 코드가 필요한 자료예요</h1>'
-      + '<p style="font-size:14px;color:#5a6b8c;line-height:1.75;word-break:keep-all">이 페이지는 <b>안내받은 연구회 코드를 입력하신 선생님</b>만 열람하실 수 있어요.<br>급식소리함 상단 <b>🔑 코드 입력</b>에 안내받은 코드를 넣으시면 바로 열립니다.</p>'
-      + '<a href="https://geupsik-soriham.vercel.app" style="display:inline-block;margin-top:18px;background:#1d4ed8;color:#fff;font-weight:700;font-size:14px;padding:12px 22px;border-radius:11px;text-decoration:none">급식소리함으로 이동</a>'
-      + '</div>';
+  var CODES = [
+    { h: '9fab831f526a61f0bee8968c77e15ab2889e09eb3164fa9a2b75f96f0533fb52', group: 'policy', label: '정책실행연구회' },
+    { h: 'ef11c940ced3b6126e727a24b9272b5ee070db7d31f335581a10852c84bfa211', group: 'insung', label: '인성밥상연구회' }
+  ];
+  var S = window.SORI || {};
+  var user = S.user || {};
+  var p = S.profile || {};
+  var email = user.email || p.email || '';
+  var groups = p.groups || [];
+  var ok = email === ADMIN || ALLOW.some(function (g) { return groups.indexOf(g) > -1; });
+  if (ok) return;
+
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  document.body.innerHTML =
+    '<div style="max-width:520px;margin:12vh auto;padding:34px 28px;font-family:Pretendard,-apple-system,sans-serif;text-align:center;background:#fff;border:1px solid #dbe4f5;border-radius:18px;box-shadow:0 10px 30px rgba(18,36,72,.07)">'
+    + '<div style="font-size:44px;margin-bottom:10px">&#128273;</div>'
+    + '<h1 style="font-size:21px;color:#122448;margin-bottom:10px">연구회 코드가 필요한 자료예요</h1>'
+    + '<p style="font-size:14px;color:#5a6b8c;line-height:1.75;word-break:keep-all;margin-bottom:18px">안내받은 <b>연구회 코드</b>를 입력하시면 바로 열립니다.</p>'
+    + '<div style="display:flex;gap:8px;max-width:360px;margin:0 auto">'
+    + '<input id="sgCode" type="text" placeholder="연구회 코드 입력" autocomplete="off" style="flex:1;min-width:0;padding:12px 14px;font-size:15px;border:1.5px solid #cbd6ec;border-radius:11px;outline:none;font-family:inherit">'
+    + '<button id="sgGo" style="background:#1d4ed8;color:#fff;font-weight:700;font-size:14px;padding:12px 20px;border:none;border-radius:11px;cursor:pointer;font-family:inherit">열기</button>'
+    + '</div>'
+    + '<div id="sgMsg" style="min-height:22px;margin-top:12px;font-size:13px;color:#c2410c"></div>'
+    + '<div style="margin-top:14px;padding-top:14px;border-top:1px solid #eef2f9;font-size:12.5px;color:#8a97b1;line-height:1.7">'
+    + '지금 로그인한 계정: <b style="color:#44557a">' + esc(email || '알 수 없음') + '</b><br>'
+    + '<a id="sgOut" href="#" style="color:#1d4ed8;text-decoration:underline">다른 구글 계정으로 로그인</a>'
+    + '</div>'
+    + '</div>';
+
+  var input = document.getElementById('sgCode');
+  var btn = document.getElementById('sgGo');
+  var msg = document.getElementById('sgMsg');
+
+  function sha256(t) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(function (buf) {
+      return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+    });
   }
+
+  function submit() {
+    var code = (input.value || '').trim().toUpperCase();
+    if (!code) { msg.textContent = '코드를 입력해 주세요.'; return; }
+    btn.disabled = true; msg.style.color = '#5a6b8c'; msg.textContent = '확인 중…';
+    var hp;
+    try { hp = sha256(code); } catch (e) { hp = Promise.reject(e); }
+    hp.then(function (h) {
+      var m = CODES.filter(function (c) { return c.h === h; })[0];
+      if (!m) {
+        btn.disabled = false; msg.style.color = '#c2410c';
+        msg.textContent = '코드가 맞지 않아요. 띄어쓰기 없이 다시 입력해 주세요.';
+        return;
+      }
+      var db = firebase.firestore();
+      var FV = firebase.firestore.FieldValue;
+      var patch = { groups: FV.arrayUnion(m.group) };
+      return db.collection('users').doc(user.uid).set(patch, { merge: true }).then(function () {
+        return db.collection('signups').doc(user.uid).set(patch, { merge: true }).catch(function () {});
+      }).then(function () {
+        msg.style.color = '#15803d';
+        msg.textContent = '🤝 ' + m.label + ' 코드가 확인됐어요. 잠시 후 열립니다…';
+        setTimeout(function () { location.reload(); }, 900);
+      });
+    }).catch(function () {
+      btn.disabled = false; msg.style.color = '#c2410c';
+      msg.textContent = '저장 중 문제가 생겼어요. 새로고침 후 다시 시도해 주세요.';
+    });
+  }
+
+  btn.addEventListener('click', submit);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+  document.getElementById('sgOut').addEventListener('click', function (e) {
+    e.preventDefault();
+    firebase.auth().signOut().then(function () { location.reload(); });
+  });
+  input.focus();
 });
 </script>
 
